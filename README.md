@@ -2,7 +2,7 @@
 :construction: :construction: This package is under development (particularly the documentation) :construction: :construction: 
 
 ## Summary
-I created this package to be able to easily generate relationships between Uberon terms in Python. 
+I created this package to be able to easily interrogate relationships between Uberon terms in Python. 
 
 ## Usage
 Example usage:
