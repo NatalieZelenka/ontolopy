@@ -6,13 +6,13 @@ I created this package to be able to easily interrogate relationships between Ub
 
 ## Installation
 `uberon_py` is available on pip, and can be installed using:
-```
+```bash
 pip3 install uberon_py
 ```
 
 ## Usage
 Example usage:
-```
+```python
 import uberon_py
 
 # read an ontology in obo format
