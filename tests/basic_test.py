@@ -2,6 +2,7 @@ import pytest
 import sys
 import os
 sys.path.append('../')
+sys.path.append('.')
 print(os.getcwd()) 
 print(os.listdir(os.getcwd()))
 import uberon_py.obo as obo
