@@ -1,8 +1,9 @@
 import sys
 sys.path.append('../')
 sys.path.append('.')
-import uberon_py.obo as obo
+from uberon_py import obo
 
+# TODO: sys.path stuff shouldn't be happening
 
 def test_basic():
 	# Tests downloading data:
@@ -11,8 +12,10 @@ def test_basic():
 	obo_object = obo.Obo(out_file, ['UBERON'])
 	# Get relations between UBERON entities:
 	relations_of_interest = ['is_a', 'part_of']
-	source_terms = ['UBERON:0007622']  # pecten oculi
-	target_term = ['UBERON:0000047']  # simple eye
+	source_terms = ['UBERON:0007622']  # "pecten oculi"
+	target_term = ['UBERON:0000047']  # "simple eye"
 	ont = obo_object.ont
 	_ = obo_object.Relations(relations_of_interest, source_terms, target_term, ont)
 
+
+# TODO: Add test of in-built obo links

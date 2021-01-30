@@ -1,5 +1,5 @@
 # `uberon_py`: a python package for the Uberon ontology
-:construction: :construction: This package is under development (particularly the documentation) :construction: :construction: 
+:construction: :construction: This package is under development :construction: :construction: 
 
 ## Summary
 I created this package to be able to easily interrogate relationships between Uberon terms in Python. 
@@ -12,6 +12,7 @@ pip3 install uberon_py
 
 ## Usage
 Example usage:
+
 ```python
 import uberon_py
 
@@ -24,5 +25,4 @@ source_terms = ['UBERON:0003290','UBERON:0003369','UBERON:0003703']
 target_terms = ['UBERON:0000955'] #  brain term
 relations_of_interest  = 'is_a','part_of']
 relations = uberon_py.Relations(source_terms,target_terms,relations_of_interest[,obo.ont).relations
-
 ```

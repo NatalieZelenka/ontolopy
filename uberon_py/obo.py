@@ -4,6 +4,8 @@ import time
 import urllib.request as request
 import os
 
+# TODO: Add warnings/logging
+
 
 def get_obo(data_name, out_dir = '../data/'):
     # TODO: load from file:
@@ -16,7 +18,6 @@ def get_obo(data_name, out_dir = '../data/'):
     url = uberon_urls[data_name]
     file_name = (os.path.basename(url))
     out_file = os.path.join(out_dir,file_name)
-
 
     if (not os.path.isdir(out_dir)):
         os.mkdir(out_dir)
@@ -334,4 +335,4 @@ class Obo:
                     relations.append(np.nan)
                 
             return pd.DataFrame(relations, index = self.source_terms)
-            
+
