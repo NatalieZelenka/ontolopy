@@ -3,11 +3,11 @@ import numpy as np
 import time
 import urllib.request as request
 import os
-
+import logging
 # TODO: Add warnings/logging
 
 
-def get_obo(data_name, out_dir = '../data/'):
+def get_obo(data_name, out_dir='../data/'):
     # TODO: load from file:
     uberon_urls = {
     'sensory-minimal':'http://ontologies.berkeleybop.org/uberon/subsets/sensory-minimal.obo',
@@ -38,7 +38,7 @@ def get_obo(data_name, out_dir = '../data/'):
 
 
 class Obo:
-    def __init__(self,file_loc,ont_ids):
+    def __init__(self, file_loc, ont_ids, root_terms=None):
         """
         Loads ontology from obo file into a dictionary of dictionaries.
         
@@ -49,7 +49,7 @@ class Obo:
         self.file_loc = file_loc
         self.ont_ids = ont_ids
         self.ont = self.load_obo()
-    
+        self.root_terms = root_terms
 
     def load_obo(self):
         """
@@ -84,7 +84,7 @@ class Obo:
                     term['name'] = name
 
                 elif 'comment:' in line[0]:
-                    comment = line[1]
+                    comment = ' '.join(line[1:])
                     term['comment'] = comment
 
                 elif 'namespace:' in line[0]:
@@ -111,6 +111,7 @@ class Obo:
                     value = line[1]
 
                 elif line[0] == 'relationship:':
+                    # TODO: tidy this the hell up
 
                     if line[1] == 'derives_from':
                         relation = 'derives_from'
@@ -132,11 +133,20 @@ class Obo:
                         relation = 'never_in_taxon'
                         value = line[2]
 
+                    elif line[1] == 'present_in_taxon':
+                        relation = 'present_in_taxon'
+                        value = line[2]
+
                     elif line[1] == 'only_in_taxon':
                         relation = 'only_in_taxon'
                         value = line[2]
 
+                    elif line[1] == 'dubious_for_taxon':
+                        relation = 'dubious_for_taxon'
+                        value = line[2]
+
                     else:
+                        # TODO: add logging here
                         relation = 'related_to'
                         value = line[2]
 
@@ -205,8 +215,8 @@ class Obo:
                                 term[ontID] = [value]
         return terms
     
-    def map_tissue_name_to_uberon(self,design_df,tissue_name_column):
-        #TODO: Make an UBERON class that is a child of Ontolgy
+    def map_tissue_name_to_uberon(self, design_df, tissue_name_column):
+        # TODO: Make an UBERON class that is a child of Ontolgy
         """Assumes that the sample name is the index of the design_df"""
         samples_names = design_df[[tissue_name_column]].dropna()
         
@@ -221,13 +231,13 @@ class Obo:
                 except:
                     synonyms = []
                 if (self.ont[uberon_term]['name'].lower() == tissue_name) or (tissue_name in synonyms):
-                    name2uberon.append([sample_id,uberon_term,tissue_name])
+                    name2uberon.append([sample_id, uberon_term, tissue_name])
                     found = True
-            if found == False:
-                name2uberon.append([sample_id,None,tissue_name])
+            if not found:
+                name2uberon.append([sample_id, None, tissue_name])
         
-        name2uberon = pd.DataFrame(name2uberon, columns = ['Sample ID','UBERON','name matched on'])
-        name2uberon=name2uberon.set_index('Sample ID')
+        name2uberon = pd.DataFrame(name2uberon, columns=['Sample ID', 'UBERON', 'name matched on'])
+        name2uberon = name2uberon.set_index('Sample ID')
         return name2uberon
     
     def get_relations(self,relations_of_interest,source_terms,target_term,ont):
@@ -246,93 +256,97 @@ class Obo:
         return self.Relations(relations_of_interest,source_terms,target_term,ont)
     
 
-    def relation_string_2_name_string(self,relation_string):
-        for i, subrelation in enumerate(relation_string.split('.')):
-            if i == 0:
-                name_string = self.ont[subrelation]['name']
-                continue
-            relation = ' "' + '_'.join(subrelation.split('_')[:-1]) + '" '
-            term = subrelation.split('_')[-1]
+def relation_string_2_name_string(ont, relation_string):
+    for i, subrelation in enumerate(relation_string.split('.')):
+        if i == 0:
+            name_string = ont[subrelation]['name']
+            continue
+        relation = ' "' + '_'.join(subrelation.split('_')[:-1]) + '" '
+        term = subrelation.split('_')[-1]
 
-            name_string += relation + self.ont[term]['name']
-        return name_string
+        name_string += relation + ont[term]['name']
+    return name_string
+
+
+class Relations:
+    def __init__(self,relations_of_interest,source_terms,target_term,ont,excluded_terms=None,print_=False):
+        """
+        Attributes:
+            relations_of_interest: a list of relations that are relevant for finding relationship between the source and target term, e.g. ['is_a','is_model_for']
+            source_terms: terms that we wish to look for relations from, list of the form [source_term_1, source_term_2, etc] such that we wish to find relationships of the form "source_term is_a target_term" or "source_term is_a other_term is_a target_term".            
+            target_term: term that we wish to look for relations to, e.g. source_term is_a target_term. Term string, either specific (e.g. 'FF:0000001') or general (e.g. 'FF')
+            relations: pandas dataframe with source_terms as index and relation_strings (or NaN) in relation_string column.
+        """
+        self.relations_of_interest = relations_of_interest
+        self.source_terms = source_terms
+        self.target_term = target_term
+        if not excluded_terms:
+            excluded_terms = []
+        self.excluded_terms = excluded_terms
+
+        self.relations = self.calculate(ont, print_)
     
 
-    class Relations:
-        def __init__(self,relations_of_interest,source_terms,target_term,ont,print_=False):
-            """
-            Attributes:
-                relations_of_interest: a list of relations that are relevant for finding relationship between the source and target term, e.g. ['is_a','is_model_for']
-                source_terms: terms that we wish to look for relations from, list of the form [source_term_1, source_term_2, etc] such that we wish to find relationships of the form "source_term is_a target_term" or "source_term is_a other_term is_a target_term".            
-                target_term: term that we wish to look for relations to, e.g. source_term is_a target_term. Term string, either specific (e.g. 'FF:0000001') or general (e.g. 'FF')
-                relations: pandas dataframe with source_terms as index and relation_strings (or NaN) in relation_string column.
-            """
-            self.relations_of_interest = relations_of_interest
-            self.source_terms = source_terms
-            self.target_term = target_term
-            self.relations = self.calculate(ont,print_)
-        
+    def calculate(self,ont,print_):
+        relations = []
+        for source_term in self.source_terms:
+            relation_strings =[source_term]
 
-        def calculate(self,ont,print_):
-            relations = []
-            for source_term in self.source_terms:
-                relation_strings =[source_term]
-    
-                #we stop looking for a term, once we find a relation to the target_term or we we don't know where else to look:
-                relation_found = False 
-                unchanged = False 
-                
-                while (relation_found == False) and (not unchanged == True):
-                    if print_: 
-                        time.sleep(0.2)
-                        print(relation_strings)
-                    new_relation_strings = []
-                    for relation_string in relation_strings:
-                        most_recent_term = relation_string.split('_')[-1]
-                        for relation in self.relations_of_interest:
-                            #Get new terms to check.
-                            try:
-                                new_terms = ont[most_recent_term][relation]
-                            except:
-                                new_terms = []
+            #we stop looking for a term, once we find a relation to the target_term or we we don't know where else to look:
+            relation_found = False 
+            unchanged = False 
+            
+            while (relation_found == False) and (not unchanged == True):
+                if print_: 
+                    time.sleep(0.2)
+                    print(relation_strings)
+                new_relation_strings = []
+                for relation_string in relation_strings:
+                    most_recent_term = relation_string.split('_')[-1]
+                    for relation in self.relations_of_interest:
+                        #Get new terms to check.
+                        try:
+                            new_terms = ont[most_recent_term][relation]
+                        except:
+                            new_terms = []
 
-                            #For each new term, check for wanted relation.
-                            for new_term in new_terms:
-                                if new_term in relation_string:
-                                    #cyclic relationship:
-                                    print('cyclic relationship',relation_string + '.' + relation + '_' + new_term)
-                                    continue
-                                new_relation_string = relation_string + '.' + relation + '_' + new_term
-                                new_relation_strings.append(new_relation_string)
-                                
-                                #if target_term is list of target terms:
-                                if isinstance(self.target_term,list):
-                                    for target_term in self.target_term:
-                                        if target_term == new_term:
-                                            relation_found = True
-                                #if term is specific:
-                                elif (':' in self.target_term):
-                                    if self.target_term == new_term:
-                                        relation_found = True
-                                        break
-                                #if term is general:
-                                else:
-                                    if new_term.split(':')[0] == self.target_term:
-                                        relation_found = True
-                                        break
-                            if relation_found:
+                        #For each new term, check for wanted relation.
+                        for new_term in new_terms:
+                            if new_term in self.excluded_terms:
+                                continue
+
+                            if new_term in relation_string:
+                                #cyclic relationship:
+                                logging.info('cyclic relationship',relation_string + '.' + relation + '_' + new_term)
+                                continue
+                            new_relation_string = relation_string + '.' + relation + '_' + new_term
+                            new_relation_strings.append(new_relation_string)
+                            
+                            # CHECK IF NEW TERM IS (ONE OF) TARGET TERM(S)
+                            #if target_term is list of specific terms:
+                            if isinstance(self.target_term,list) and (new_term in self.target_term):
+                                relation_found = True
+                            #if target_term is one specific term
+                            elif (':' in self.target_term) and (self.target_term == new_term):
+                                relation_found = True
+                                break
+                            #if term is general:
+                            elif new_term.split(':')[0] == self.target_term:
+                                relation_found = True
                                 break
                         if relation_found:
                             break
-                                            
-                    if new_relation_strings == []:
-                        unchanged = True
-                    relation_strings = new_relation_strings
-                    
-                if relation_found:
-                    relations.append(new_relation_string)
-                else:
-                    relations.append(np.nan)
+                    if relation_found:
+                        break
+                                        
+                if new_relation_strings == []:
+                    unchanged = True
+                relation_strings = new_relation_strings
                 
-            return pd.DataFrame(relations, index = self.source_terms)
+            if relation_found:
+                relations.append(new_relation_string)
+            else:
+                relations.append(np.nan)
+            
+        return pd.DataFrame(relations, index = self.source_terms)
 
