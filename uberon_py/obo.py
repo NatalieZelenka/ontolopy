@@ -4,36 +4,44 @@ import time
 import urllib.request as request
 import os
 import logging
-# TODO: Add warnings/logging
+# TODO: Add warnings/logging (remove all print statements)
 
 
 def get_obo(data_name, out_dir='../data/'):
     # TODO: load from file:
+    # TODO: Allow overwrite existing file
+
     uberon_urls = {
     'sensory-minimal':'http://ontologies.berkeleybop.org/uberon/subsets/sensory-minimal.obo',
     'uberon-extended': 'http://purl.obolibrary.org/obo/uberon/ext.obo',
     'uberon-basic': 'http://purl.obolibrary.org/obo/uberon.obo',
     }
 
+    if data_name not in uberon_urls.keys():
+        supported_list = '\n'.join(uberon_urls.keys())
+        logging.error(f'`data_name` {data_name} not in supported list:\n{supported_list}')
+
     url = uberon_urls[data_name]
     file_name = (os.path.basename(url))
-    out_file = os.path.join(out_dir,file_name)
+    out_file = os.path.join(out_dir, file_name)
 
-    if (not os.path.isdir(out_dir)):
+    if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
+        logging.info(f'Created directory {out_dir}.')
 
     if os.path.isfile(out_file):
-        print ('File already exists at location: ',os.path.abspath(out_file))
+        logging.warning(f'File already exists at location: {os.path.abspath(out_file)}. Cancelling download.')
         return out_file
 
+    # TODO: make sure behaviour is sensible if url doesn't exist. (Write test).
     file_data = request.urlopen(url) 
     data_to_write = file_data.read() 
-    print("Downloaded " + data_name + " from: " + url)
+    logging.info(f'Downloaded {data_name} from: {url}')
 
     with open(out_file, 'wb') as f:  
         f.write(data_to_write)
 
-    print("Wrote " + data_name + "file to: " + os.path.abspath(out_file))
+    logging.info(f'Wrote {data_name} file to: {os.path.abspath(out_file)}')
     return out_file
 
 
@@ -240,7 +248,7 @@ class Obo:
         name2uberon = name2uberon.set_index('Sample ID')
         return name2uberon
     
-    def get_relations(self,relations_of_interest,source_terms,target_term,ont):
+    def get_relations(self, relations_of_interest, source_terms, target_term, ont):
         """
         get_relations finds all relationships (based on relations_of_interest e.g. ['is_a']) between terms like source_term and terms like target_term, e.g. source_term is_a target_term. Returns a mapping between term and most specific (least number of steps) relationstring (if one exists, else NaN) for each relevant term in the ontology.
         
@@ -269,7 +277,7 @@ def relation_string_2_name_string(ont, relation_string):
 
 
 class Relations:
-    def __init__(self,relations_of_interest,source_terms,target_term,ont,excluded_terms=None,print_=False):
+    def __init__(self, relations_of_interest, source_terms, target_term, ont, excluded_terms=None, print_=False):
         """
         Attributes:
             relations_of_interest: a list of relations that are relevant for finding relationship between the source and target term, e.g. ['is_a','is_model_for']
@@ -277,17 +285,17 @@ class Relations:
             target_term: term that we wish to look for relations to, e.g. source_term is_a target_term. Term string, either specific (e.g. 'FF:0000001') or general (e.g. 'FF')
             relations: pandas dataframe with source_terms as index and relation_strings (or NaN) in relation_string column.
         """
+        # TODO: change _print, so that we just have logging.info of those levels.
         self.relations_of_interest = relations_of_interest
         self.source_terms = source_terms
         self.target_term = target_term
         if not excluded_terms:
             excluded_terms = []
         self.excluded_terms = excluded_terms
-
         self.relations = self.calculate(ont, print_)
-    
 
-    def calculate(self,ont,print_):
+    def calculate(self, ont, print_):
+        # TODO: write how this works.
         relations = []
         for source_term in self.source_terms:
             relation_strings =[source_term]
@@ -296,7 +304,7 @@ class Relations:
             relation_found = False 
             unchanged = False 
             
-            while (relation_found == False) and (not unchanged == True):
+            while (not relation_found) and (not unchanged):
                 if print_: 
                     time.sleep(0.2)
                     print(relation_strings)
@@ -316,8 +324,7 @@ class Relations:
                                 continue
 
                             if new_term in relation_string:
-                                #cyclic relationship:
-                                logging.info('cyclic relationship',relation_string + '.' + relation + '_' + new_term)
+                                logging.info(f'cyclic relationship: {relation_string}.{relation}_{new_term}')
                                 continue
                             new_relation_string = relation_string + '.' + relation + '_' + new_term
                             new_relation_strings.append(new_relation_string)
@@ -339,7 +346,7 @@ class Relations:
                     if relation_found:
                         break
                                         
-                if new_relation_strings == []:
+                if len(new_relation_strings) == 0:
                     unchanged = True
                 relation_strings = new_relation_strings
                 
@@ -348,5 +355,5 @@ class Relations:
             else:
                 relations.append(np.nan)
             
-        return pd.DataFrame(relations, index = self.source_terms)
+        return pd.DataFrame(relations, index=self.source_terms)
 
