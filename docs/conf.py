@@ -26,20 +26,21 @@ with open(ver_path) as ver_file:
 # The full version, including alpha/beta/rc tags
 release = f"v{ns['__version__']}"
 
+sys.path.append(os.path.abspath("./_ext"))
+extensions = ['versioned-tagged-docs']
+
 # -- Project information -----------------------------------------------------
 
 project = 'ontolopy'
 copyright = '2021, Natalie Thurlby'
 author = 'Natalie Thurlby'
 
-
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# extensions coming with Sphinx (named 'sphinx._ext.*') or your custom
 # ones.
-extensions = [
+extensions += [
     'myst_nb'
 ]
 
