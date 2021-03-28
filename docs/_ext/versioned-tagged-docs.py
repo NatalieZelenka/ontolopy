@@ -23,12 +23,12 @@ def copy_to_version(app, exception):
     except:
         # TODO: Decide if I would like to rebuild the site during PRs
         commit = repo.commit()
-        tree = commit.tree
         branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
-        number = re.search(r'pull/(\d+)/', branch_name).group(1)
+        number = int(re.search(r'pull/(\d+)/', branch_name).group(1))
+
         gh = Github()
-        gh_repo = gh.get_repo("PyGithub/PyGithub")
-        pr = gh_repo.get_pull(int(number))
+        gh_repo = gh.get_repo("NatalieThurlby/Ontolopy")
+        pr = gh_repo.get_pull(number)
         from_ = pr.head.label.split(':')[1]
         to_ = pr.base.label.split(':')[1]
 
