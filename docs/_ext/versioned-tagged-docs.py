@@ -16,7 +16,12 @@ def copy_to_version(app, exception):
     # Get branch name, version number, and tag
     git_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(app.outdir))))
     repo = git.Repo(git_root)
-    branch_name = repo.active_branch.name
+
+    try:
+        branch_name = repo.active_branch.name
+    except:
+        commit = repo.commit().hexsha
+        branch_name = repo.git.branch('--contains', commit).strip('* ')
 
     ns = {}
     ver_path = convert_path(os.path.join(git_root, 'ontolopy/version.py'))
