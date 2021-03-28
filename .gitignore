@@ -4,6 +4,5 @@ build/
 dist/
 tests/data/
 __pycache__/
-data/
 *.egg-info/
 .idea/
