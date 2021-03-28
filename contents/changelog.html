@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Changelog &#8212; ontolopy v1.0.0-beta documentation</title>
+    <title>Changelog &#8212; ontolopy v1.0.1-beta documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
@@ -128,12 +128,17 @@
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#beta">
-   1.0.0-beta
+   1.0.1-beta
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#id1">
-   0.1.0
+  <a class="reference internal nav-link" href="#ontolopy-1-0-0-beta">
+   Ontolopy 1.0.0-beta
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#uberon-py-0-1-0">
+   uberon-py 0.1.0
   </a>
  </li>
 </ul>
@@ -156,17 +161,25 @@
   <div class="section" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="beta">
-<h2>1.0.0-beta<a class="headerlink" href="#beta" title="Permalink to this headline">¶</a></h2>
+<h2><a class="reference external" href="https://github.com/metawards/MetaWards/releases/tag/1.0.1-beta">1.0.1-beta</a><a class="headerlink" href="#beta" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Renamed module to Ontolopy.</p></li>
+<li><p>Got documentation on gh-pages [<a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/issues/2">#2</a>]</p></li>
+<li><p>Wrote sphinx extension to be able to access versioned docs (not yet easy to navigate)</p></li>
+<li><p>Removed TravisCI for testing, and added GitHub Actions for testing, deploying docs, and packaging [<a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/issues/1">#1</a>].</p></li>
+</ul>
+</div>
+<div class="section" id="ontolopy-1-0-0-beta">
+<h2>Ontolopy 1.0.0-beta<a class="headerlink" href="#ontolopy-1-0-0-beta" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Renamed module to Ontolopy [<a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/issues/4">#4</a>]</p></li>
 <li><p>Refactored <code class="docutils literal notranslate"><span class="pre">Obo()</span></code> and <code class="docutils literal notranslate"><span class="pre">Relations()</span></code> class.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Obo()</span></code> now extends <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p></li>
 <li><p>Added unit tests for <code class="docutils literal notranslate"><span class="pre">ontolopy.validate_term()</span></code> and <code class="docutils literal notranslate"><span class="pre">ontolopy.read_line_obo()</span></code>.</p></li>
-<li><p>Added Sphinx documentation, with PyData Sphinx theme.</p></li>
+<li><p>Added basic contents for Sphinx documentation [<a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/issues/2">#2</a>], with PyData Sphinx theme.</p></li>
 </ul>
 </div>
-<div class="section" id="id1">
-<h2>0.1.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="uberon-py-0-1-0">
+<h2>uberon-py 0.1.0<a class="headerlink" href="#uberon-py-0-1-0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Download <code class="docutils literal notranslate"><span class="pre">.obo</span></code> files: <a class="reference external" href="http://ontologies.berkeleybop.org/uberon/subsets/sensory-minimal.obo">“sensory-minimal”</a>, <a class="reference external" href="http://purl.obolibrary.org/obo/uberon/ext.obo">“uberon-extended”</a> and <a class="reference external" href="http://purl.obolibrary.org/obo/uberon.obo">“uberon-basic”</a></p></li>
 <li><p>Load <code class="docutils literal notranslate"><span class="pre">.obo</span></code> files: added <code class="docutils literal notranslate"><span class="pre">Obo()</span></code> class.</p></li>
