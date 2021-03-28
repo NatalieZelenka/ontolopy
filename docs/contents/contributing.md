@@ -24,6 +24,10 @@ local development:
 `python3 setup.py sdist`
 `pip3 install -e .`
 
+## Build local docs
+`cd docs`
+`sphinx-build . _build/html`
+
 ## Release
 - Once there is a working version on `main`:
   - edit the drafted release, filling in the checklist
