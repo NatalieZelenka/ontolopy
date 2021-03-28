@@ -2,7 +2,7 @@
 #   - update the versioned docs
 #   - upload a Python Package using Twine
 
-name: Upload Python Package
+name: New Release
 
 on:
   release:
