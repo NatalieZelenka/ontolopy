@@ -1,6 +1,5 @@
 # Quickstart
 
-[//]: # (TODO: Line too long)
 [//]: # (TODO: make myst code-cell so it actually runs)
 
 ```python
