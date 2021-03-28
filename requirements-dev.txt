@@ -5,3 +5,4 @@ pydata-sphinx-theme
 twine
 gitpython
 myst-nb
+pygithub

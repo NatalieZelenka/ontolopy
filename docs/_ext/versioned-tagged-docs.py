@@ -1,9 +1,10 @@
 import git
+from github import Github
 from distutils.util import convert_path
 import logging
 import os
 import shutil
-
+import re
 
 def copy_to_version(app, exception):
     """
@@ -20,10 +21,18 @@ def copy_to_version(app, exception):
     try:
         branch_name = repo.active_branch.name
     except:
+        # TODO: Decide if I would like to rebuild the site during PRs
         commit = repo.commit()
         tree = commit.tree
         branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
-        logging.warning(f'Detached HEAD state, commit: {commit.hexsha} on branch name {branch_name} tree {tree}.')
+        number = re.search(r'pull/(\d+)/', branch_name)
+        gh = Github()
+        gh_repo = gh.get_repo("PyGithub/PyGithub")
+        pr = gh_repo.get_pull(int(number))
+        from_ = pr.head.label.split(':')[1]
+        to_ = pr.base.label.split(':')[1]
+
+        logging.warning(f'Detached HEAD state, detached PR from {from_} to {to_}.')
 
     ns = {}
     ver_path = convert_path(os.path.join(git_root, 'ontolopy/version.py'))
