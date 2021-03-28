@@ -20,10 +20,10 @@ def copy_to_version(app, exception):
     try:
         branch_name = repo.active_branch.name
     except:
-        commit = repo.commit().hexsha
+        commit = repo.commit()
         tree = commit.tree
-        branch_name = repo.git.branch('--contains', commit).strip('* ')
-        logging.warning(f'Detached HEAD state, commit: {commit} on branch name {branch_name} tree {tree}.')
+        branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
+        logging.warning(f'Detached HEAD state, commit: {commit.hexsha} on branch name {branch_name} tree {tree}.')
 
     ns = {}
     ver_path = convert_path(os.path.join(git_root, 'ontolopy/version.py'))
