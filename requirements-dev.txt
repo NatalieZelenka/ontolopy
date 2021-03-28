@@ -1,3 +1,4 @@
 setuptools
 sphinx
 pytest
+pydata-sphinx-theme
