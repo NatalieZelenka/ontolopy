@@ -23,9 +23,9 @@ Ontolopy uses the following conventions and programming style:
 - Relative imports should be used at all times, with imports ideally delayed until they are needed.
 
 ### Development workflow
-1. Create a new GitHub issue or comment on an existing issue, saying what you are planning on working on and when.
+1. Create a [new GitHub issue](https://github.com/NatalieThurlby/ontolopy/issues/new) or comment on an existing issue, saying what you are planning on working on and when.
 2. Develop on a feature branch, which should branch off the `main` branch.
-3. Create a PR (Pull Request) from the feature branch to the `dev` branch (this will trigger tests through the `run-tests.yml` GitHub Action)
+3. Create a [new PR](https://github.com/NatalieThurlby/ontolopy/compare) (Pull Request) from the feature branch to the `dev` branch (this will trigger tests through the `run-tests.yml` GitHub Action)
 - test locally before pushing (run `pytest` at root) to GitHub
 
 ### Install local development version
