@@ -1,0 +1,8 @@
+setuptools
+sphinx
+pytest
+pydata-sphinx-theme
+twine
+gitpython
+myst-nb
+pygithub

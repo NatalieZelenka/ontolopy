@@ -1,9 +1,9 @@
 *.DS_Store
+_build/
 build/
 _build/
 dist/
 tests/data/
 __pycache__/
-data/
 *.egg-info/
 .idea/
