@@ -22,19 +22,40 @@ def copy_to_version(app, exception):
         branch_name = repo.active_branch.name
     except:
         # TODO: Decide if I would like to rebuild the site during PRs
+
         commit = repo.commit()
         branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
         logging.warning(f'Branch name: {branch_name}')
-        number = int(re.search(r'pull/(\d+)/', branch_name).group(1))
 
         gh = Github()
         gh_repo = gh.get_repo("NatalieThurlby/Ontolopy")
-        pr = gh_repo.get_pull(number)
-        from_ = pr.head.label.split(':')[1]
-        to_ = pr.base.label.split(':')[1]
 
-        logging.warning(f'Detached HEAD state, detached PR from {from_} to {to_}.')
-        branch_name = from_
+        pr_reg = re.findall(r'pull/(\d+)/', branch_name)
+        release_reg = re.findall(r'(\d+\.\d+\.\d+?-\w+)', branch_name)
+
+        # PR
+        if len(pr_reg) != 0:
+            assert(len(pr_reg) == 1)
+            number = int(pr_reg[0])
+            pr = gh_repo.get_pull(number)
+            from_ = pr.head.label.split(':')[1]
+            to_ = pr.base.label.split(':')[1]
+
+            logging.warning(f'Detached HEAD state: PR from {from_} to {to_}.')
+            branch_name = from_
+        # Release
+        elif len(release_reg) != 0:
+            assert(len(release_reg)) == 1
+            release_id = release_reg[0]
+            release = gh_repo.get_release(release_id)
+            logging.warning(
+                f'Detected detached HEAD state: due to release {release_id} on branch {release.target_commitish}')
+            if release.prerelease:
+                logging.warning(f"We don't keep versioned docs for pre-releases.")
+            elif release.target_commitish == 'main':
+                branch_name = release.target_commitish
+            else:
+                logging.error(f'Releases should only happen on branch "main", not branch {release.target_commitish}.')
 
     ns = {}
     ver_path = convert_path(os.path.join(git_root, 'ontolopy/version.py'))
