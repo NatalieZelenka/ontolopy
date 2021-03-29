@@ -76,6 +76,12 @@
  </a>
 </li>
 
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="roadmap.html">
+  Roadmap
+ </a>
+</li>
+
         
       </ul>
 
@@ -229,15 +235,19 @@
 </div>
 <div class="section" id="release">
 <h2>Release<a class="headerlink" href="#release" title="Permalink to this headline">¶</a></h2>
+<p>This is the current process for releasing:</p>
 <ul class="simple">
-<li><p>Once there is a working version on <code class="docutils literal notranslate"><span class="pre">main</span></code>:</p>
+<li><p>Once the PR from dev into main is passing all checks</p></li>
+<li><p>Someone will approve the PR from <code class="docutils literal notranslate"><span class="pre">dev</span></code> into <code class="docutils literal notranslate"><span class="pre">main</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">sdist</span> <span class="pre">bdist_wheel</span></code> on <code class="docutils literal notranslate"><span class="pre">main</span></code> to create dist files to upload when doing GitHub release.</p></li>
+<li><p>fill in the changelog in the docs</p></li>
+<li><p>edit the drafted release, filling in the checklist</p>
 <ul>
-<li><p>edit the drafted release, filling in the checklist</p></li>
-<li><p>make sure that you have filled out the changelog</p></li>
-<li><p>via GitHub, tag the release with the same version number as the number in <code class="docutils literal notranslate"><span class="pre">ontolopy/version.py</span></code></p></li>
-<li><p>this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.</p></li>
+<li><p>copy the changelog to the GitHub release</p></li>
+<li><p>tag the release with the <strong>exact same version number</strong> as the number in <code class="docutils literal notranslate"><span class="pre">ontolopy/version.py</span></code> (the action will fail otherwise)</p></li>
 </ul>
 </li>
+<li><p>this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.</p></li>
 </ul>
 </div>
 <div class="section" id="our-github-actions">

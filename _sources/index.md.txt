@@ -15,4 +15,5 @@ Ontolopy supports `.obo` files (it does not support `.owl` files).
 contents/installation
 contents/quickstart
 contents/changelog
+contents/roadmap
 ```

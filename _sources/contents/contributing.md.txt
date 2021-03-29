@@ -29,11 +29,15 @@ local development:
 `sphinx-build . _build/html`
 
 ## Release
-- Once there is a working version on `main`:
-  - edit the drafted release, filling in the checklist
-  - make sure that you have filled out the changelog
-  - via GitHub, tag the release with the same version number as the number in `ontolopy/version.py`
-  - this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.
+This is the current process for releasing:
+- Once the PR from dev into main is passing all checks
+- Someone will approve the PR from `dev` into `main`
+- Run `python3 setup.py sdist bdist_wheel` on `main` to create dist files to upload when doing GitHub release.
+- fill in the changelog in the docs
+- edit the drafted release, filling in the checklist
+  - copy the changelog to the GitHub release
+  - tag the release with the **exact same version number** as the number in `ontolopy/version.py` (the action will fail otherwise)
+- this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.
 
 ## Our GitHub Actions
 [//]: # (TODO: fill in other GH actions)
