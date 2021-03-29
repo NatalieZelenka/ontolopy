@@ -9,7 +9,7 @@ Ontolopy was developed by Natalie Thurlby. Please [contact me](mailto:NatalieThu
 Ontolopy was developed for [Natalie's thesis](https://nataliethurlby.github.io/phenotype_from_genotype).
 While Ontolopy benefits from Research Software Engineering best practices such as automated testing, created versioned docs, and continuous integration, to some degree, there is also much more that could be done to increase test coverage and usability.
 
-Please see the [roadmap](https://nataliethurlby.github.io/ontolopy/contents/roadmap.html) to read about future directions for Ontolopy.
+Please see the [roadmap](./roadmap) to read about future directions for Ontolopy.
 
 ## Developer guidance
 
