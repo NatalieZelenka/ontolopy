@@ -2,7 +2,10 @@
 
 [//]: # (TODO: Link to GitHub releases)
 
-## [1.0.1-beta](https://github.com/metawards/MetaWards/releases/tag/1.0.1-beta)
+## [1.0.2-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.1-beta...1.0.2-beta)
+- Fixed GitHub action for versioned docs [[#9](https://github.com/NatalieThurlby/ontolopy/issues/9)]
+
+## [1.0.1-beta](https://github.com/NatalieThurlby/ontolopy/releases/tag/1.0.1-beta)
 - Got documentation on gh-pages [[#2](https://github.com/NatalieThurlby/ontolopy/issues/2)]
 - Wrote sphinx extension to be able to access versioned docs (not yet easy to navigate)
 - Removed TravisCI for testing, and added GitHub Actions for testing, deploying docs, and packaging [[#1](https://github.com/NatalieThurlby/ontolopy/issues/1)].
