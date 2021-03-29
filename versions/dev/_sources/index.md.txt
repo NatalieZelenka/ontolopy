@@ -16,4 +16,5 @@ contents/installation
 contents/quickstart
 contents/changelog
 contents/roadmap
+contents/develop
 ```
