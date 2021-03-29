@@ -164,17 +164,17 @@
      Development workflow
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-a-new-release">
+     Creating a new release
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ontolopy-s-github-actions">
+     Ontolopy’s GitHub Actions
+    </a>
+   </li>
   </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#releasing">
-   Releasing
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ontolopy-github-actions">
-   Ontolopy GitHub Actions
-  </a>
  </li>
 </ul>
 
@@ -197,12 +197,13 @@
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="developers">
 <h2>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
-<p>Ontolopy was developed by Natalie Thurlby. Please <a class="reference external" href="mailto:NatalieThurlby&#37;&#52;&#48;bristol&#46;ac&#46;uk">contact me</a> for any communications related to Ontolopy.</p>
+<p>Ontolopy was developed by Natalie Thurlby.
+Please <a class="reference external" href="mailto:NatalieThurlby&#37;&#52;&#48;bristol&#46;ac&#46;uk">contact me</a> for any communications related to Ontolopy.</p>
 </div>
 <div class="section" id="philosophy">
 <h2>Philosophy<a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h2>
 <p>Ontolopy was developed for <a class="reference external" href="https://nataliethurlby.github.io/phenotype_from_genotype">Natalie’s thesis</a>.
-While Ontolopy benefits from Research Software Engineering best practices such as automated testing, created versioned docs, and continuous integration, to some degree, there is also much more that could be done to increase test coverage and usability.</p>
+While to some degree, Ontolopy benefits from Research Software Engineering best practices such as automated testing, semantic versioning, versioned docs, and continuous integration, there is also much more that could be done to increase reliability and usability (particularly in terms of test and tutorial coverage).</p>
 <p>Please see the <a class="reference internal" href="roadmap.html"><span class="doc std std-doc">roadmap</span></a> to read about future directions for Ontolopy.</p>
 </div>
 <div class="section" id="developer-guidance">
@@ -236,26 +237,26 @@ While Ontolopy benefits from Research Software Engineering best practices such a
 <li><p>Create a <a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/compare">new PR</a> (Pull Request) from the feature branch to the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch (this will trigger tests through the <code class="docutils literal notranslate"><span class="pre">run-tests.yml</span></code> GitHub Action)</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="releasing">
-<h2>Releasing<a class="headerlink" href="#releasing" title="Permalink to this headline">¶</a></h2>
-<p>This is the current process for creating a new pypi and GitHub release:</p>
+<div class="section" id="creating-a-new-release">
+<h3>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this headline">¶</a></h3>
+<p>This is the current process for creating a new PyPI and GitHub release:</p>
 <ul class="simple">
 <li><p>Once the PR from dev into main is passing all checks</p></li>
 <li><p>Someone will approve the PR from <code class="docutils literal notranslate"><span class="pre">dev</span></code> into <code class="docutils literal notranslate"><span class="pre">main</span></code></p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">sdist</span> <span class="pre">bdist_wheel</span></code> on <code class="docutils literal notranslate"><span class="pre">main</span></code> to create dist files to upload when doing GitHub release.</p></li>
 <li><p>fill in the changelog in the docs</p></li>
-<li><p>edit the drafted release, filling in the checklist</p>
+<li><p>Create a <a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/releases/new">new release</a>, filling in the checklist</p>
 <ul>
 <li><p>copy the changelog to the GitHub release</p></li>
 <li><p>tag the release with the <strong>exact same version number</strong> as the number in <code class="docutils literal notranslate"><span class="pre">ontolopy/version.py</span></code> (the action will fail otherwise)</p></li>
+<li><p>upload the distribution files.</p></li>
 </ul>
 </li>
-<li><p>this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.</p></li>
+<li><p>Creating the release will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available. Check that it was successful.</p></li>
 </ul>
 </div>
-<div class="section" id="ontolopy-github-actions">
-<h2>Ontolopy GitHub Actions<a class="headerlink" href="#ontolopy-github-actions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ontolopy-s-github-actions">
+<h3>Ontolopy’s GitHub Actions<a class="headerlink" href="#ontolopy-s-github-actions" title="Permalink to this headline">¶</a></h3>
 <p>Ontolopy uses GitHub Actions for Continuous Integration to automate updating the docs, running tests, and distributing the package.
 The actions are:</p>
 <ul class="simple">
@@ -265,6 +266,7 @@ The actions are:</p>
 </ul>
 <hr class="docutils" />
 <p>These materials were adapted from the <a class="reference external" href="https://www.bristol.ac.uk/acrc/research-software-engineering/">Bristol RSE team</a>’s <a class="reference external" href="https://metawards.org/versions/1.5.1/development.html">Metawards Development Guide</a>.</p>
+</div>
 </div>
 </div>
 

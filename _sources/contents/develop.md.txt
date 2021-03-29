@@ -3,11 +3,12 @@
 [//]: # (TODO: Write about all-contributors, how to contribute ideas, PRs, etc)
 
 ## Developers
-Ontolopy was developed by Natalie Thurlby. Please [contact me](mailto:NatalieThurlby@bristol.ac.uk) for any communications related to Ontolopy.
+Ontolopy was developed by Natalie Thurlby. 
+Please [contact me](mailto:NatalieThurlby@bristol.ac.uk) for any communications related to Ontolopy.
 
 ## Philosophy
 Ontolopy was developed for [Natalie's thesis](https://nataliethurlby.github.io/phenotype_from_genotype).
-While Ontolopy benefits from Research Software Engineering best practices such as automated testing, created versioned docs, and continuous integration, to some degree, there is also much more that could be done to increase test coverage and usability.
+While to some degree, Ontolopy benefits from Research Software Engineering best practices such as automated testing, semantic versioning, versioned docs, and continuous integration, there is also much more that could be done to increase reliability and usability (particularly in terms of test and tutorial coverage).
 
 Please see the [roadmap](./roadmap) to read about future directions for Ontolopy.
 
@@ -30,18 +31,19 @@ Ontolopy uses the following conventions and programming style:
     - To build dist files locally, run `python3 setup.py sdist`, and to install those local dist files, you can run `pip3 install -e .`.
 3. Create a [new PR](https://github.com/NatalieThurlby/ontolopy/compare) (Pull Request) from the feature branch to the `dev` branch (this will trigger tests through the `run-tests.yml` GitHub Action)
 
-## Releasing
-This is the current process for creating a new pypi and GitHub release:
+### Creating a new release
+This is the current process for creating a new PyPI and GitHub release:
 - Once the PR from dev into main is passing all checks
 - Someone will approve the PR from `dev` into `main`
 - Run `python3 setup.py sdist bdist_wheel` on `main` to create dist files to upload when doing GitHub release.
 - fill in the changelog in the docs
-- edit the drafted release, filling in the checklist
+- Create a [new release](https://github.com/NatalieThurlby/ontolopy/releases/new), filling in the checklist
   - copy the changelog to the GitHub release
   - tag the release with the **exact same version number** as the number in `ontolopy/version.py` (the action will fail otherwise)
-- this will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available.
+  - upload the distribution files. 
+- Creating the release will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available. Check that it was successful.
 
-## Ontolopy GitHub Actions
+### Ontolopy's GitHub Actions
 Ontolopy uses GitHub Actions for Continuous Integration to automate updating the docs, running tests, and distributing the package.
 The actions are: 
 - [`deploy-site.yml`](https://github.com/NatalieThurlby/ontolopy/actions/workflows/deploy-site.yml): deploys docs (latest) when changes are pulled into `dev`.
