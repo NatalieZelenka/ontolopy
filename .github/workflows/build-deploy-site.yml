@@ -40,8 +40,8 @@ jobs:
       run: |
         sphinx-build docs/ docs/_build/html/
 
-    - if: github.event_name == 'push'
-      name: GitHub Pages action
+    - name: GitHub Pages action
+      if: github.event_name == 'push'
       uses: peaceiris/actions-gh-pages@v3.5.9
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
