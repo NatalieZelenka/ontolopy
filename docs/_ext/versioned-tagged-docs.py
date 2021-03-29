@@ -6,9 +6,12 @@ import os
 import shutil
 import re
 
+
 def copy_to_version(app, exception):
     """
-
+    We keep versioned docs in two situations:
+     - A new PR into dev from a feature branch (in versions/dev)
+     - A new release on main (in versions/{versions})
     :param app:
     :param exception:
     :return:
@@ -19,10 +22,9 @@ def copy_to_version(app, exception):
     repo = git.Repo(git_root)
 
     try:
+        # This works if you're working locally, and you're on a branch rather than on a PR or release tag commit.
         branch_name = repo.active_branch.name
     except:
-        # TODO: Decide if I would like to rebuild the site during PRs
-
         commit = repo.commit()
         branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
         logging.warning(f'Branch name: {branch_name}')
@@ -41,8 +43,8 @@ def copy_to_version(app, exception):
             from_ = pr.head.label.split(':')[1]
             to_ = pr.base.label.split(':')[1]
 
-            logging.warning(f'Detached HEAD state: PR from {from_} to {to_}.')
-            branch_name = from_
+            logging.warning(f'Detected detached HEAD state: PR from {from_} to {to_}.')
+            branch_name = to_  # only want to keep where we're going to, e.g. feature_branch -> dev, version = "dev"
         # Release
         elif len(release_reg) != 0:
             assert(len(release_reg)) == 1
@@ -92,7 +94,7 @@ def copy_to_version(app, exception):
         os.system(f'rm -r {version_dir}')
         shutil.copytree(app.outdir, version_dir, ignore=shutil.ignore_patterns('versions'))
 
-    # TODO: build json
+    # TODO: build json for dropdown (#9)
 
 
 def setup(app):
