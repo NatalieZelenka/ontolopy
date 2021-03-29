@@ -24,6 +24,7 @@ def copy_to_version(app, exception):
         # TODO: Decide if I would like to rebuild the site during PRs
         commit = repo.commit()
         branch_name = repo.git.branch('--contains', commit.hexsha).strip('* ')
+        logging.warning(f'Branch name: {branch_name}')
         number = int(re.search(r'pull/(\d+)/', branch_name).group(1))
 
         gh = Github()
@@ -33,6 +34,7 @@ def copy_to_version(app, exception):
         to_ = pr.base.label.split(':')[1]
 
         logging.warning(f'Detached HEAD state, detached PR from {from_} to {to_}.')
+        branch_name = from_
 
     ns = {}
     ver_path = convert_path(os.path.join(git_root, 'ontolopy/version.py'))
