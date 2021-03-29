@@ -24,22 +24,14 @@ Ontolopy uses the following conventions and programming style:
 
 ### Development workflow
 1. Create a [new GitHub issue](https://github.com/NatalieThurlby/ontolopy/issues/new) or comment on an existing issue, saying what you are planning on working on and when.
-2. Develop on a feature branch, which should branch off the `main` branch.
+2. Develop on a feature branch, which should branch off the `main` branch:
+    - To test locally, run `pytest` at root.
+    - Build the book locally, run `sphinx-build docs docs/_build/html`.
+    - To build dist files locally, run `python3 setup.py sdist`, and to install those local dist files, you can run `pip3 install -e .`.
 3. Create a [new PR](https://github.com/NatalieThurlby/ontolopy/compare) (Pull Request) from the feature branch to the `dev` branch (this will trigger tests through the `run-tests.yml` GitHub Action)
-- test locally before pushing (run `pytest` at root) to GitHub
 
-### Install local development version
-local development:
-`python3 setup.py sdist`
-`pip3 install -e .`
-
-## Build local docs
-`cd docs`
-
-`sphinx-build . _build/html`
-
-## Release
-This is the current process for releasing:
+## Releasing
+This is the current process for creating a new pypi and GitHub release:
 - Once the PR from dev into main is passing all checks
 - Someone will approve the PR from `dev` into `main`
 - Run `python3 setup.py sdist bdist_wheel` on `main` to create dist files to upload when doing GitHub release.
