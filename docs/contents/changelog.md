@@ -2,6 +2,17 @@
 
 [//]: # (TODO: Link to GitHub releases)
 
+## [1.1.0-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.2-beta...1.1.0-beta)
+- New functionality:
+    - Added `opy.Obo.merge()`: merge one ontology into another.
+    - Added `opy.Obo.from_dict()`: create `Obo()` from a dictionary.
+- Refactoring:
+    - Separated `load_obo` from `Obo()` class.
+    - Made the static class variables for reading ontologies private variables.
+    - Added test for `obo.Obo.merge()`.
+- Improved docstrings for `Obo()` class.
+- Set up sphinx autodoc and used to document `Obo()` class.
+
 ## [1.0.2-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.1-beta...1.0.2-beta)
 - Fixed GitHub action for versioned docs [[#9](https://github.com/NatalieThurlby/ontolopy/issues/9)]
 

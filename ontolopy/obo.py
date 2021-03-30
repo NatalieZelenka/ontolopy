@@ -74,14 +74,14 @@ def _read_line_obo(line_list, ont_ids):
     line_list[0] = line_list[0].replace(':', '')
     new_relations = []  # list of (relation, value) tuples.
 
-    if line_list[0] in Obo.text_attributes:
+    if line_list[0] in Obo._text_attributes:
         new_relations.append((line_list[0], ' '.join(line_list[1:])))
 
-    elif line_list[0] in Obo.attributes:
+    elif line_list[0] in Obo._attributes:
         new_relations.append((line_list[0], line_list[1]))
 
-    elif line_list[0] in Obo.nestable_attributes:
-        if line_list[1] in Obo.relationships:
+    elif line_list[0] in Obo._nestable_attributes:
+        if line_list[1] in Obo._relationships:
             new_relations.append((line_list[1], line_list[2]))
         elif ':' in line_list[1]:
             new_relations.append((line_list[0], line_list[1]))
@@ -127,34 +127,108 @@ def _extract_source(text, ont_ids):
     return new_relations
 
 
+def _merge_dict(a, b, prefer='self', path=None):
+    """
+    Recursively merges dictionary a into dictionary b. Prefers a.
+    :param a:
+    :param b:
+    :param path:
+    :return:
+    """
+    c = a.copy()
+    if path is None:
+        path = []
+    for key in b:
+        if key in c:
+            if isinstance(c[key], dict) and isinstance(b[key], dict):
+                _merge_dict(c[key], b[key], path + [str(key)])
+            elif c[key] == b[key]:
+                pass  # same leaf value
+            elif isinstance(c[key], list) and isinstance(b[key], list):
+                c[key] = list(set(b[key]) | set(c[key]))
+            else:
+                if key == 'namespace':
+                    c[key] = f"Combined {c[key]} and {b[key]}"
+                elif key == 'name':
+                    # we expect some differences in name, due to e.g. terms becoming obsolete
+                    logging.info(f"Unmatching names: {c[key]} =/= {b[key]}, keeping the former.")
+                else:
+                    logging.error(f"For key {key}, {c[key]} =/= {b[key]}. Choosing {prefer}.")
+                    if prefer == 'new':
+                        c[key] = b[key]
+        else:
+            c[key] = b[key]
+    assert (len(c) == (len(a) + len(b) - len(set(a.keys()) & set(b.keys()))))
+    return c
+
+
+def load_obo(file_loc, ont_ids, discard_obsolete=True):
+    """
+    Loads ontology from obo file into a dictionary of dictionaries.
+
+    """
+    obo = Obo()
+    # TODO: check for version/date of ontology file and save if possible
+    # terms = {}
+    with open(file_loc) as f:
+        term = {}
+        for i, line in enumerate(f):
+            line = line.strip()
+            line = line.strip().split(' ')
+
+            if '[Term]' in line[0]:
+                if len(term) > 0 and 'id' in term.keys():
+                    if 'comment' in term.keys() and 'obsolete' in term['comment'].lower() and discard_obsolete:
+                        logging.info(f"term {term['id']}: {term['name']} is obsolete. Discarding.")
+                        term = {}
+                        continue
+                    elif term['id'].split(':')[0] in ont_ids:
+                        obo[term['id']] = term
+                term = {}
+
+            new_relations = _read_line_obo(line, ont_ids)
+            for (relation, value) in new_relations:
+                if relation in Obo._strings:
+                    term[relation] = value
+                    continue
+                try:
+                    term[relation].append(value)
+                except KeyError:
+                    term[relation] = [value]
+
+    return obo
+
+
 class Obo(dict):
     # TODO: tidy so that all attributes are organised in a dict with type (string, list), acceptable formats, nestable
 
-    strings = [  # must be strings not lists
+    _strings = [  # must be strings not lists
         'name',
         'id'
     ]
 
-    nestable_attributes = [
+    _nestable_attributes = [
         'relationships',
         'intersection_of',
     ]
 
-    text_attributes = [
+    _text_attributes = [
         'name',
         'comments',
     ]
 
-    attributes = [
+    _attributes = [
         'id',
         'alt_id',
         'is_a',
         'subset',
+        'is_obsolete',  # TODO: add test
+        'replaced_by',  # TODO: add test
         'union_of',
         'namespace',
         'consider',
     ]
-    relationships = [
+    _relationships = [
         'derives_from',
         'is_model_for',
         'develops_from',
@@ -165,57 +239,30 @@ class Obo(dict):
         'dubious_for_taxon',
     ]
 
-    def __init__(self, file_loc, ont_ids, root_terms=None, discard_obsolete=True):
+    def __init__(self, dict_=dict()):
         """
-        Loads ontology from obo file into a dictionary of dictionaries.
-        
-        Attributes:
-            file_loc: file location of obo (.obo file)
-        # TODO: include other attributes
         """
-        self.file_loc = file_loc
-        self.ont_ids = ont_ids
-        self.root_terms = root_terms
-        self.discard_obsolete = discard_obsolete
-        self.load_obo()
+        # TODO: other attributes (note must also be changed in merge).
+        self.from_dict(dict_)
 
-    # TODO: Write __str__ and __repr__
-
-    def load_obo(self):
+    def from_dict(self, dict_):
         """
-        Loads ontology from obo file into a dictionary of dictionaries.
-
+        Create Obo() from a Python dict.
+        :param dict_:
+        :return:
         """
-        # TODO: check for version/date of ontology file and save if possible
-        # terms = {}
-        with open(self.file_loc) as f:
-            term = {}
-            for i, line in enumerate(f):
-                line = line.strip()
-                line = line.strip().split(' ')
-
-                if '[Term]' in line[0]:
-                    if len(term) > 0 and 'id' in term.keys():
-                        if 'comment' in term.keys() and 'obsolete' in term['comment'].lower() and self.discard_obsolete:
-                            logging.info(f"term {term['id']}: {term['name']} is obsolete. Discarding.")
-                            term = {}
-                            continue
-                        elif term['id'].split(':')[0] in self.ont_ids:
-                            self[term['id']] = term
-                    term = {}
-
-                new_relations = _read_line_obo(line, self.ont_ids)
-                for (relation, value) in new_relations:
-                    if relation in self.strings:
-                        term[relation] = value
-                        continue
-                    try:
-                        term[relation].append(value)
-                    except KeyError:
-                        term[relation] = [value]
-
+        assert(isinstance(type(dict_), dict))
+        for term, value in dict_.items():
+            self[term] = value
         return self
-    
+
+    def copy(self):
+        copy = dict(self).copy()
+
+        for att_key, att_val in self.items():
+
+
+
     def map_tissue_name_to_uberon(self, design_df, tissue_name_column):
         # TODO: Make an UBERON class that is a child of Ontolgy
         """Assumes that the sample name is the index of the design_df"""
@@ -254,6 +301,21 @@ class Obo(dict):
             Relations class object, containing relations (see relations class for details), relations_of_interest, source_term and target_term
             
         """
-        return self.Relations(relations_of_interest,source_terms,target_term,ont)
+        return self.Relations(relations_of_interest, source_terms, target_term, ont)
 
+    def merge(self, new, prefer='self'):
+        """
+        Recursively merges `new` into Obo.
+        :param new: Obo object to add.
+        :param prefer: prefer 'self' (base Obo) or 'new' (new Obo)
+        :return merged: A merged Obo
+        """
+        prefer_options = ['self', 'new']
+        try:
+            assert(prefer in prefer_options)
+        except AssertionError:
+            logging.error(f"`prefer` must be in {str(prefer_options)}, not {prefer}.")
+
+        merged = _merge_dict(self, new, prefer)
+        return merged
 
