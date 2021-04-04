@@ -1,12 +1,13 @@
+"""
+This module contains code for creating and working with the Obo class: objects that represent ontologies.
+"""
+
 import pandas as pd
 import urllib.request as request
 import os
 import logging
 from . import relations
-import pprint
 
-
-# TODO: separate into relations and obo files at minimum
 
 def download_obo(data_name, out_dir='../data/'):
     """
@@ -16,7 +17,6 @@ def download_obo(data_name, out_dir='../data/'):
     :param out_dir: Directory in which to save OBO file.
     :return out_file: path to saved file.
     """
-    # TODO: load from file:
     # TODO: Allow overwrite existing file
     # TODO: test
 
@@ -142,9 +142,9 @@ def _merge_dict(a, b, prefer='self', path=None):
     """
     Recursively merges dictionary a into dictionary b. Prefers a.
 
-    :param a:
-    :param b:
-    :param path:
+    :param a: dictionary a (self)
+    :param b: dictionary b (new)
+    :param path: used in recursion
     :return:
     """
     c = a.copy()
@@ -178,7 +178,7 @@ def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
     """
     Loads ontology from `.obo` file at `file_loc`.
 
-    :param file_loc: path to stored obo
+    :param file_loc: file location - path to stored obo file.
     :param ont_ids: list of ontology ids, e.g. `['UBERON', 'CL']`
     :param discard_obsolete: if True discard obsolete terms.
     :return: `Obo` ontology object.
@@ -219,8 +219,11 @@ def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
 class Obo(dict):
     """
     Creates `Obo` ontology object from `dict` with ontology terms for keys, mapping to term attributes and relations.
+
     Each key/term is a dictionary with key: value pairs mapping either:
+
     1. Attribute (`str`) to value (`str`), e.g. `'name': 'scapula'`
+
     2. Type of relationship (`str`) to term identifiers (`list`), e.g. `'is_a': ['UBERON:0002513']`
 
     Info: Obo stands for Open Biological Ontology: a popular file format for building biological ontologies.
@@ -265,7 +268,14 @@ class Obo(dict):
     ]
 
     def __init__(self, source_dict=dict()):
+        """
+        Initialise self from a source dictionary.
+
+        :param source_dict: `dict` mapping terms to their attributes and relationships.
+        """
         # Note: when adding attributes consider how this will effect self.merge()
+        print(source_dict)
+        assert(isinstance(source_dict, dict))
         self._from_dict(source_dict)
 
     def __copy__(self):
@@ -284,42 +294,10 @@ class Obo(dict):
         :param source_dict: dictionary object from which to create `Obo`
         :return:
         """
-        assert(isinstance(type(source_dict), dict))
+        assert(isinstance(source_dict, dict))
         for term, value in source_dict.items():
             self[term] = value
         return self
-
-    def map_tissue_name_to_uberon(self, design_df, tissue_name_column):
-        """
-        Map tissues from sample names to uberon identifers.
-
-        :param design_df: must have sample identifiers for index.
-        :param tissue_name_column:
-        :return:
-        """
-        # TODO: This should only exist if Obo() contains Uberon. Should make a separate Uberon class that inherits Obo
-        #   and move this there.
-        samples_names = design_df[[tissue_name_column]].dropna()
-        
-        name2uberon = []
-        for sample_id, row in samples_names.iterrows():
-            tissue_name = row[tissue_name_column]
-            found = False
-            tissue_name = tissue_name.lower()
-            for uberon_term in self.keys():
-                try:
-                    synonyms = self[uberon_term]['synonyms']
-                except KeyError:
-                    synonyms = []
-                if (self[uberon_term]['name'].lower() == tissue_name) or (tissue_name in synonyms):
-                    name2uberon.append([sample_id, uberon_term, tissue_name])
-                    found = True
-            if not found:
-                name2uberon.append([sample_id, None, tissue_name])
-        
-        name2uberon = pd.DataFrame(name2uberon, columns=['Sample ID', 'UBERON', 'name matched on'])
-        name2uberon = name2uberon.set_index('Sample ID')
-        return name2uberon
     
     # def get_relations(self, relations_of_interest, source_terms, target_term, ont):
     #     """
@@ -360,4 +338,3 @@ class Obo(dict):
 
         merged = _merge_dict(self, new, prefer)
         return merged
-
