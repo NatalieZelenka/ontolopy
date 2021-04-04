@@ -43,7 +43,7 @@ author = 'Natalie Thurlby'
 # ones.
 extensions += [
     'myst_nb',
-    "sphinxarg.ext",
+    # "sphinxarg.ext",
     'sphinx.ext.autosummary',
 ]
 autosummary_generate = True
@@ -68,8 +68,7 @@ html_theme = 'pydata_sphinx_theme'
 html_theme_options = {
     'github_url': 'https://github.com/NatalieThurlby/ontolopy',
     'twitter_url': 'https://twitter.com/hashtag/ontolopy',
-    'search_bar_text': 'Search this site...',
-    'search_bar_position': 'navbar',
+    'search_bar_text': 'Search the docs...',
     "icon_links": [
         {
             "name": "PyPI",
@@ -77,6 +76,16 @@ html_theme_options = {
             "icon": "fas fa-box-open",
         }
     ],
+    "search_bar_position": "navbar"
+}
+
+html_sidebars = {
+    'index': [],
+    'contents/changelog': [],
+    'contents/installation': [],
+    'contents/quickstart': [],
+    'contents/develop': [],
+    'contents/roadmap': [],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
