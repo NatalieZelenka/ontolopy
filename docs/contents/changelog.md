@@ -4,10 +4,13 @@
 
 ## [1.1.0-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.2-beta...1.1.0-beta)
 - New functionality:
-    - Added `opy.Obo.merge()`: merge one ontology into another.
-    - Added `opy.Obo.from_dict()`: create `Obo()` from a dictionary.
+    - `Obo()` class:
+        - Added `opy.Obo.merge()`: merge one ontology into another.
+        - Added `opy.Obo.from_dict()`: create `Obo()` from a dictionary.
+        - Added `opy.Obo.copy()`: copies `Obo()` object.
+        - Separated `load_obo` from `Obo()` class.
+
 - Refactoring:
-    - Separated `load_obo` from `Obo()` class.
     - Made the static class variables for reading ontologies private variables.
     - Added test for `obo.Obo.merge()`.
 - Improved docstrings for `Obo()` class.

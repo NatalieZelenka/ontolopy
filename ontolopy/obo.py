@@ -2,12 +2,20 @@ import pandas as pd
 import urllib.request as request
 import os
 import logging
+from . import relations
 import pprint
 
 
 # TODO: separate into relations and obo files at minimum
 
-def get_obo(data_name, out_dir='../data/'):
+def download_obo(data_name, out_dir='../data/'):
+    """
+    Download obo from a list of known locations.
+
+    :param data_name: Name of OBO you wish to download.
+    :param out_dir: Directory in which to save OBO file.
+    :return out_file: path to saved file.
+    """
     # TODO: load from file:
     # TODO: Allow overwrite existing file
     # TODO: test
@@ -46,8 +54,10 @@ def get_obo(data_name, out_dir='../data/'):
     return out_file
 
 
-def validate_term(term_text, allowed_ids):
+def _validate_term(term_text: str, allowed_ids: list):
     """
+    Check term is a valid format.
+
     :param term_text: text to validate, e.g. "NCBITaxon:9606" or "UBERON:12391203".
     :param allowed_ids: a list of allowed identifier prefixes, e.g. ['GO', 'UBERON']
     :return: bool True=valid, False=not
@@ -60,7 +70,7 @@ def validate_term(term_text, allowed_ids):
         return True
 
 
-def _read_line_obo(line_list, ont_ids):
+def _read_line_obo(line_list: list, ont_ids: list):
     """
     Reads a line of an obo file, and returns a list of (relation, value) tuples. Most lines will only contain one.
     :param line_list: list of line elements (original line split by spaces)
@@ -102,7 +112,7 @@ def _read_line_obo(line_list, ont_ids):
         new_relations += _extract_source(rest, ont_ids)
 
     elif line_list[0] == 'xref':
-        if validate_term(line_list[1], ont_ids):
+        if _validate_term(line_list[1], ont_ids):
             new_relations.append((line_list[0], line_list[1]))
 
     # TODO: add logging info for unrecognised lines
@@ -113,6 +123,7 @@ def _read_line_obo(line_list, ont_ids):
 def _extract_source(text, ont_ids):
     """
     In obo files sources are written between square brackets. Currently does not keep URL sources (e.g. wikipedia).
+
     :param text:
     :param ont_ids: list of allowed ontology ids , e.g. ['GO', 'HP']
     :return new_relations: list of (relation, value) tuples, e.g. [('xref': 'HP:091231')]
@@ -122,7 +133,7 @@ def _extract_source(text, ont_ids):
     new_relations = []
     source_terms = [x.strip() for x in text[text.find("[") + 1:text.find("]")].split(',')]
     for source_term in source_terms:
-        if validate_term(source_term, ont_ids):
+        if _validate_term(source_term, ont_ids):
             new_relations.append((source_term.split(':')[0], source_term))
     return new_relations
 
@@ -130,6 +141,7 @@ def _extract_source(text, ont_ids):
 def _merge_dict(a, b, prefer='self', path=None):
     """
     Recursively merges dictionary a into dictionary b. Prefers a.
+
     :param a:
     :param b:
     :param path:
@@ -162,14 +174,19 @@ def _merge_dict(a, b, prefer='self', path=None):
     return c
 
 
-def load_obo(file_loc, ont_ids, discard_obsolete=True):
+def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
     """
-    Loads ontology from obo file into a dictionary of dictionaries.
+    Loads ontology from `.obo` file at `file_loc`.
 
+    :param file_loc: path to stored obo
+    :param ont_ids: list of ontology ids, e.g. `['UBERON', 'CL']`
+    :param discard_obsolete: if True discard obsolete terms.
+    :return: `Obo` ontology object.
     """
     obo = Obo()
     # TODO: check for version/date of ontology file and save if possible
     # terms = {}
+    assert(isinstance(ont_ids, list))
     with open(file_loc) as f:
         term = {}
         for i, line in enumerate(f):
@@ -200,8 +217,16 @@ def load_obo(file_loc, ont_ids, discard_obsolete=True):
 
 
 class Obo(dict):
-    # TODO: tidy so that all attributes are organised in a dict with type (string, list), acceptable formats, nestable
+    """
+    Creates `Obo` ontology object from `dict` with ontology terms for keys, mapping to term attributes and relations.
+    Each key/term is a dictionary with key: value pairs mapping either:
+    1. Attribute (`str`) to value (`str`), e.g. `'name': 'scapula'`
+    2. Type of relationship (`str`) to term identifiers (`list`), e.g. `'is_a': ['UBERON:0002513']`
 
+    Info: Obo stands for Open Biological Ontology: a popular file format for building biological ontologies.
+    """
+
+    # TODO: tidy so that all attributes are organised in a dict with type (string, list), acceptable formats, nestable
     _strings = [  # must be strings not lists
         'name',
         'id'
@@ -239,33 +264,41 @@ class Obo(dict):
         'dubious_for_taxon',
     ]
 
-    def __init__(self, dict_=dict()):
-        """
-        """
-        # TODO: other attributes (note must also be changed in merge).
-        self.from_dict(dict_)
+    def __init__(self, source_dict=dict()):
+        # Note: when adding attributes consider how this will effect self.merge()
+        self._from_dict(source_dict)
 
-    def from_dict(self, dict_):
+    def __copy__(self):
+        copy = Obo(dict(self).copy())
+
+        for att_key, att_val in self.__dict__.items():
+            copy.__dict__[att_key] = att_val
+
+        return copy
+
+    # TODO: Create __deepcopy__
+
+    def _from_dict(self, source_dict):
         """
         Create Obo() from a Python dict.
-        :param dict_:
+        :param source_dict: dictionary object from which to create `Obo`
         :return:
         """
-        assert(isinstance(type(dict_), dict))
-        for term, value in dict_.items():
+        assert(isinstance(type(source_dict), dict))
+        for term, value in source_dict.items():
             self[term] = value
         return self
 
-    def copy(self):
-        copy = dict(self).copy()
-
-        for att_key, att_val in self.items():
-
-
-
     def map_tissue_name_to_uberon(self, design_df, tissue_name_column):
-        # TODO: Make an UBERON class that is a child of Ontolgy
-        """Assumes that the sample name is the index of the design_df"""
+        """
+        Map tissues from sample names to uberon identifers.
+
+        :param design_df: must have sample identifiers for index.
+        :param tissue_name_column:
+        :return:
+        """
+        # TODO: This should only exist if Obo() contains Uberon. Should make a separate Uberon class that inherits Obo
+        #   and move this there.
         samples_names = design_df[[tissue_name_column]].dropna()
         
         name2uberon = []
@@ -273,12 +306,12 @@ class Obo(dict):
             tissue_name = row[tissue_name_column]
             found = False
             tissue_name = tissue_name.lower()
-            for uberon_term in self.ont.keys():
+            for uberon_term in self.keys():
                 try:
-                    synonyms = self.ont[uberon_term]['synonyms']
-                except:
+                    synonyms = self[uberon_term]['synonyms']
+                except KeyError:
                     synonyms = []
-                if (self.ont[uberon_term]['name'].lower() == tissue_name) or (tissue_name in synonyms):
+                if (self[uberon_term]['name'].lower() == tissue_name) or (tissue_name in synonyms):
                     name2uberon.append([sample_id, uberon_term, tissue_name])
                     found = True
             if not found:
@@ -288,24 +321,33 @@ class Obo(dict):
         name2uberon = name2uberon.set_index('Sample ID')
         return name2uberon
     
-    def get_relations(self, relations_of_interest, source_terms, target_term, ont):
-        """
-        get_relations finds all relationships (based on relations_of_interest e.g. ['is_a']) between terms like source_term and terms like target_term, e.g. source_term is_a target_term. Returns a mapping between term and most specific (least number of steps) relationstring (if one exists, else NaN) for each relevant term in the ontology.
-        
-        Args:
-            relations_of_interest: a list of relations that are relevant for finding relationship between the source and target term, e.g. ['is_a','is_model_for']
-            source_terms: terms that we wish to look for relations from, list of the form [source_term_1, source_term_2, etc] such that we wish to find relationships of the form "source_term is_a target_term" or "source_term is_a other_term is_a target_term".
-            target_term: term that we wish to look for relations to, e.g. source_term is_a target_term. Term string, either specific (e.g. 'FF:0000001') or general (e.g. 'FF')
-
-        Returns:
-            Relations class object, containing relations (see relations class for details), relations_of_interest, source_term and target_term
-            
-        """
-        return self.Relations(relations_of_interest, source_terms, target_term, ont)
+    # def get_relations(self, relations_of_interest, source_terms, target_term, ont):
+    #     """
+    #     get_relations finds all relationships (based on relations_of_interest e.g. ['is_a']) between terms like source
+    #     _term and terms like target_term, e.g. source_term is_a target_term. Returns a mapping between term and most
+    #     specific (least number of steps) relationstring (if one exists, else NaN) for each relevant term in the
+    #     ontology.
+    #
+    #     Args:
+    #         relations_of_interest: a list of relations that are relevant for finding relationship between the source
+    #         and target term, e.g. ['is_a','is_model_for']
+    #         source_terms: terms that we wish to look for relations from, list of the form [source_term_1,
+    #         source_term_2, etc] such that we wish to find relationships of the form "source_term is_a target_term" or
+    #         "source_term is_a other_term is_a target_term".
+    #         target_term: term that we wish to look for relations to, e.g. source_term is_a target_term. Term string,
+    #         either specific (e.g. 'FF:0000001') or general (e.g. 'FF')
+    #
+    #     Returns:
+    #         Relations class object, containing relations (see relations class for details), relations_of_interest,
+    #         source_term and target_term
+    #
+    #     """
+    #     return relations.Relations(relations_of_interest, source_terms, target_term, ont)
 
     def merge(self, new, prefer='self'):
         """
-        Recursively merges `new` into Obo.
+        Recursively merges `new` into `self` and returns a merged `Obo` ontology.
+
         :param new: Obo object to add.
         :param prefer: prefer 'self' (base Obo) or 'new' (new Obo)
         :return merged: A merged Obo

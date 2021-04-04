@@ -10,7 +10,7 @@ def test_download_obo():
 	# TODO: Test not allowed names
 	# TODO: Delete before trying and check that works
 	# TODO: Don't delete before trying and check logging input correct
-	opy.get_obo('uberon-basic', out_dir=data_dir)
+	opy.download_obo('uberon-basic', out_dir=data_dir)
 
 # TODO: sys.path stuff shouldn't be happening
 

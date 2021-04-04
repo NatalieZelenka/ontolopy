@@ -17,4 +17,5 @@ contents/quickstart
 contents/changelog
 contents/roadmap
 contents/develop
+contents/reference
 ```
