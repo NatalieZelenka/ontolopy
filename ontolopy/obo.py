@@ -90,14 +90,21 @@ def _read_line_obo(line_list: list, ont_ids: list):
     elif line_list[0] in Obo._attributes:
         new_relations.append((line_list[0], line_list[1]))
 
+    elif line_list[0] in Obo._relationships:
+        new_relations.append((line_list[0], line_list[1]))
+
     elif line_list[0] in Obo._nestable_attributes:
         if line_list[1] in Obo._relationships:
             new_relations.append((line_list[1], line_list[2]))
         elif ':' in line_list[1]:
             new_relations.append((line_list[0], line_list[1]))
-        else:
+        elif ':' in line_list[2]:
             # TODO: Add test
-            logging.error(f'Unknown relationship {line_list[1]} for value {line_list[2]}, saving as {line_list[0]}.')
+            logging.info(f'Relationship {line_list[1]} is not currently stored.'
+                         f' saving as {line_list[0]}. {line_list[2]}.')
+            new_relations.append((line_list[0], line_list[2]))
+        else:
+            logging.warning(f'Line looks unusual: {" ".join(line_list)}')
 
     elif line_list[0] == 'synonym':
         synonym = (' '.join(line_list)).split('"')[1].lower()
@@ -236,7 +243,7 @@ class Obo(dict):
     ]
 
     _nestable_attributes = [
-        'relationships',
+        'relationship',
         'intersection_of',
     ]
 
@@ -248,15 +255,16 @@ class Obo(dict):
     _attributes = [
         'id',
         'alt_id',
-        'is_a',
         'subset',
         'is_obsolete',  # TODO: add test
         'replaced_by',  # TODO: add test
-        'union_of',
         'namespace',
         'consider',
     ]
+
     _relationships = [
+        'is_a',
+        'union_of',
         'derives_from',
         'is_model_for',
         'develops_from',
@@ -265,6 +273,22 @@ class Obo(dict):
         'present_in_taxon',
         'only_in_taxon',
         'dubious_for_taxon',
+        # TODO: test from here down:
+        'capable_of',
+        'positively_regulates',
+        'negatively_regulates',
+        'regulates',
+        'connects',
+        'attaches_to',
+        'adjacent_to',
+        'drains',
+        'supplies',
+        'composed_primarily_of',
+        'skeleton_of',
+        'developmentally_replaces',
+        'located_in',
+        'produced_by',
+        'extends_fibers_into'
     ]
 
     def __init__(self, source_dict=dict()):
@@ -274,7 +298,6 @@ class Obo(dict):
         :param source_dict: `dict` mapping terms to their attributes and relationships.
         """
         # Note: when adding attributes consider how this will effect self.merge()
-        print(source_dict)
         assert(isinstance(source_dict, dict))
         self._from_dict(source_dict)
 
@@ -286,7 +309,21 @@ class Obo(dict):
 
         return copy
 
-    # TODO: Create __deepcopy__
+    # TODO: Write __deepcopy__
+
+    @property
+    def terms(self):
+        return self.keys()
+
+    @property
+    def leaves(self):
+        """
+        Leaf terms are the most specific terms in the ontology. They have no children, only parents.
+        :return:
+        """
+        return self.get_leaves()
+
+    # TODO: Write roots(), get_roots()
 
     def _from_dict(self, source_dict):
         """
@@ -337,4 +374,36 @@ class Obo(dict):
             logging.error(f"`prefer` must be in {str(prefer_options)}, not {prefer}.")
 
         merged = _merge_dict(self, new, prefer)
-        return merged
+        return Obo(merged)
+
+    def get_leaves(self, term_types=None, relations_of_interest=None):
+        """
+        Get the leaf terms from the ontology only.
+
+        :param term_types: if given, a list of term types to restrict to (e.g. ['UBERON', 'GO']
+        :param relations_of_interest: if given, a list of relation types to restrict to (e.g. 'is_a', 'part_of')
+        :return:
+        """
+        if not relations_of_interest:
+            relations_of_interest = self._relationships + self._nestable_attributes
+        else:
+            assert(isinstance(relations_of_interest, list))
+
+        leaves = set(self.terms)
+        if term_types is not None:
+            assert (isinstance(term_types, list))
+            assert (
+                all([':' not in x for x in term_types]))  # don't want 'UBERON:1231239' must be of form 'UBERON', 'GO'
+            leaves = {x for x in leaves if x.split(':')[0] in term_types}
+
+        for term in self.terms:
+            for relation in self[term].keys():
+                if relation not in relations_of_interest:
+                    continue
+                related_terms = self[term][relation]
+                assert(isinstance(related_terms, list))
+                leaves -= set(related_terms)
+
+        return leaves
+
+    # TODO: Write to_json()
