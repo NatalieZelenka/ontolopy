@@ -16,6 +16,7 @@ import sys
 from distutils.util import convert_path
 
 sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # get version:
 ns = {}
@@ -41,8 +42,12 @@ author = 'Natalie Thurlby'
 # extensions coming with Sphinx (named 'sphinx._ext.*') or your custom
 # ones.
 extensions += [
-    'myst_nb'
+    'myst_nb',
+    # "sphinxarg.ext",
+    'sphinx.ext.autosummary',
 ]
+autosummary_generate = True
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -63,8 +68,24 @@ html_theme = 'pydata_sphinx_theme'
 html_theme_options = {
     'github_url': 'https://github.com/NatalieThurlby/ontolopy',
     'twitter_url': 'https://twitter.com/hashtag/ontolopy',
-    'search_bar_text': 'Search this site...',
-    'search_bar_position': 'navbar',
+    'search_bar_text': 'Search the docs...',
+    "icon_links": [
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/ontolopy",
+            "icon": "fas fa-box-open",
+        }
+    ],
+    "search_bar_position": "navbar"
+}
+
+html_sidebars = {
+    'index': [],
+    'contents/changelog': [],
+    'contents/installation': [],
+    'contents/quickstart': [],
+    'contents/develop': [],
+    'contents/roadmap': [],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

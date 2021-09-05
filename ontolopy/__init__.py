@@ -1,2 +1,3 @@
-from .obo import Obo, validate_term, get_obo
-from .relations import Relations
+from .obo import Obo, download_obo, load_obo
+from .relations import Relations, relation_path_to_text
+from .uberon import Uberon, uberon_from_obo

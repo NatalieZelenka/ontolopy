@@ -1,5 +1,6 @@
 setuptools
 sphinx
+sphinx-argparse
 pytest
 pydata-sphinx-theme
 twine
