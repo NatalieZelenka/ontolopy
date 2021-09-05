@@ -9,12 +9,20 @@
         - Added `opy.Obo.from_dict()`: create `Obo()` from a dictionary.
         - Added `opy.Obo.copy()`: copies `Obo()` object.
         - Separated `load_obo` from `Obo()` class.
-
+        - Added local functions that are used to extract synonyms and synonym types from synonym strings.
+    - new `opy.uberon` module, containing:
+        - `Uberon()` class that inherits from `Obo()`, including `sample_map_by_ont` method.
+        - `uberon_from_obo` function
+    - new `Relations.format_all` method.
 - Refactoring:
     - Made the static class variables for reading ontologies private variables.
+    - Refactored `opy.relations.Relations` class to subclass Pandas DataFrame.
+- Testing:    
     - Added test for `obo.Obo.merge()`.
-- Improved docstrings for `Obo()` class.
-- Set up sphinx autodoc and used to document `Obo()` class.
+    - Updated tests to include new behaviour for synonyms
+- Documentation:
+    - Improved docstrings for `Obo()` class.
+    - Set up sphinx autodoc and used to document `Obo()` class.
 
 ## [1.0.2-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.1-beta...1.0.2-beta)
 - Fixed GitHub action for versioned docs [[#9](https://github.com/NatalieThurlby/ontolopy/issues/9)]

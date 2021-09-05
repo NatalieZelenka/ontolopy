@@ -6,7 +6,7 @@ import pandas as pd
 import urllib.request as request
 import os
 import logging
-from . import relations
+import validators
 
 
 def download_obo(data_name, out_dir='../data/'):
@@ -59,26 +59,70 @@ def _validate_term(term_text: str, allowed_ids: list):
     Check term is a valid format.
 
     :param term_text: text to validate, e.g. "NCBITaxon:9606" or "UBERON:12391203".
-    :param allowed_ids: a list of allowed identifier prefixes, e.g. ['GO', 'UBERON']
+    :param allowed_ids: a list of allowed identifier prefixes, e.g. ['GO', 'UBERON'] or None if dont' want to restrict.
     :return: bool True=valid, False=not
     """
     assert(isinstance(term_text, str))
-    assert(isinstance(allowed_ids, list))
+    if not allowed_ids:
+        assert(isinstance(allowed_ids, list))
     if ':' not in term_text:
         return False
-    elif term_text.split(':')[0] in allowed_ids:
+    elif (allowed_ids and (term_text.split(':')[0] in allowed_ids)):
         return True
+
+
+def _find_all(haystack, needle):
+    idx = -1
+    while True:
+        idx = haystack.find(needle, idx + 1)
+        if idx == -1:
+            break
+        yield idx
+
+
+def _find(s: str, ch: str) -> list:
+    """
+    Finds indices of character `ch` in string `s`
+    """
+    return [i for i, ltr in enumerate(s) if ltr == ch]
+
+
+def _between_chars(s: str, ch1: str, ch2=None) -> str:
+    if ch2 is None:
+        # i1, i2 = _find(s, ch1)[:2]
+        i1, i2 = [x for x in _find_all(s, ch1)][:2]
+    else:
+        i1 = s.find(ch1)
+        i2 = s.find(ch2)
+    return s[i1 + 1: i2]
+
+
+def _extract_synonym(rest_of_line: str) -> str:
+    """
+    Extracts synonym name from obo line.
+    :param rest_of_line: string containing line except for "synonym: "
+    :return:
+    """
+    synonym = rest_of_line.split('"')[1].lower()
+    return synonym
+
+
+def _extract_synonym_type(rest_of_line:str) -> str:
+    _, i1 = [x for x in _find_all(rest_of_line, '"')][:2]
+    i2 = rest_of_line.find('[')
+    return rest_of_line[i1+1: i2]
 
 
 def _read_line_obo(line_list: list, ont_ids: list):
     """
     Reads a line of an obo file, and returns a list of (relation, value) tuples. Most lines will only contain one.
     :param line_list: list of line elements (original line split by spaces)
-    :param ont_ids: allowed ontology ids (list)
+    :param ont_ids: allowed ontology ids (list): None if want to keep all IDs.
     :return new_relations: a list of (relation, value) tuples
     """
 
-    assert(isinstance(ont_ids, list))
+    if not ont_ids:
+        assert(isinstance(ont_ids, list))
     assert(isinstance(line_list, list))
 
     line_list[0] = line_list[0].replace(':', '')
@@ -107,13 +151,15 @@ def _read_line_obo(line_list: list, ont_ids: list):
             logging.warning(f'Line looks unusual: {" ".join(line_list)}')
 
     elif line_list[0] == 'synonym':
-        synonym = (' '.join(line_list)).split('"')[1].lower()
-        new_relations.append((line_list[0], synonym))
-
         rest = ' '.join(line_list[1:])  # rest of line
-        new_relations += _extract_source(rest, ont_ids)
+
+        source_relations = _extract_source(rest, ont_ids)
+        new_relations += source_relations
+
+        new_relations.append((line_list[0], rest))
 
     elif line_list[0] == 'def':
+        # TODO: update to contain
         rest = ' '.join(line_list[1:])
         new_relations.append((line_list[0], rest))
         new_relations += _extract_source(rest, ont_ids)
@@ -132,16 +178,18 @@ def _extract_source(text, ont_ids):
     In obo files sources are written between square brackets. Currently does not keep URL sources (e.g. wikipedia).
 
     :param text:
-    :param ont_ids: list of allowed ontology ids , e.g. ['GO', 'HP']
+    :param ont_ids: list of allowed ontology ids , e.g. ['GO', 'HP'], or None if don't want to restrict.
     :return new_relations: list of (relation, value) tuples, e.g. [('xref': 'HP:091231')]
-    # TODO: also keep urls
-    # TODO: What kind of relations should sources be? 'xref'? My own, e.g. 'source'/'source.synonym'
+    # TODO: What kind of relations should sources be? 'xref'? My own, e.g. 'source'/'source.synonym'/'source.GO.synonym'
     """
     new_relations = []
-    source_terms = [x.strip() for x in text[text.find("[") + 1:text.find("]")].split(',')]
-    for source_term in source_terms:
-        if _validate_term(source_term, ont_ids):
-            new_relations.append((source_term.split(':')[0], source_term))
+    sources = [x.strip() for x in _between_chars(text, '[', ']').split(',')]
+    for source in sources:
+        if _validate_term(source, ont_ids):
+            # TODO: explain in Ontolopy part
+            new_relations.append((source.split(':')[0], source))
+        elif validators.url(source):
+            new_relations.append(('url', source))
     return new_relations
 
 
@@ -181,7 +229,7 @@ def _merge_dict(a, b, prefer='self', path=None):
     return c
 
 
-def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
+def load_obo(file_loc, ont_ids=None, discard_obsolete=True):
     """
     Loads ontology from `.obo` file at `file_loc`.
 
@@ -193,7 +241,8 @@ def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
     obo = Obo()
     # TODO: check for version/date of ontology file and save if possible
     # terms = {}
-    assert(isinstance(ont_ids, list))
+    if not ont_ids:
+        assert(isinstance(ont_ids, list))
     with open(file_loc) as f:
         term = {}
         for i, line in enumerate(f):
@@ -206,7 +255,7 @@ def load_obo(file_loc, ont_ids: list, discard_obsolete=True):
                         logging.info(f"term {term['id']}: {term['name']} is obsolete. Discarding.")
                         term = {}
                         continue
-                    elif term['id'].split(':')[0] in ont_ids:
+                    elif (not ont_ids) or (ont_ids and (term['id'].split(':')[0] in ont_ids)):
                         obo[term['id']] = term
                 term = {}
 
@@ -275,6 +324,9 @@ class Obo(dict):
         'dubious_for_taxon',
         # TODO: test from here down:
         'capable_of',
+        'has_part',
+        'channel_for',
+        'capable_of_part_of',
         'positively_regulates',
         'negatively_regulates',
         'regulates',
@@ -288,7 +340,9 @@ class Obo(dict):
         'developmentally_replaces',
         'located_in',
         'produced_by',
-        'extends_fibers_into'
+        'extends_fibers_into',
+        'has_potential_to_develop_into',
+        'continuous_with',
     ]
 
     def __init__(self, source_dict=dict()):
@@ -313,15 +367,19 @@ class Obo(dict):
 
     @property
     def terms(self):
+        """
+        The ontology terms (a `dict_keys` object).
+        :return:
+        """
         return self.keys()
 
     @property
     def leaves(self):
         """
-        Leaf terms are the most specific terms in the ontology. They have no children, only parents.
+        Leaf terms are the most specific terms in the ontology; they have no children, only parents (a `set` object).
         :return:
         """
-        return self.get_leaves()
+        return self._get_leaves()
 
     # TODO: Write roots(), get_roots()
 
@@ -335,6 +393,14 @@ class Obo(dict):
         for term, value in source_dict.items():
             self[term] = value
         return self
+
+    def terms_from(self, ont_id: list):
+        """
+        Returns a set of terms in Obo ontology with prefix in list ont_id
+        :param ont_id: list of ontology prefixes e.g. ['HP', 'GO']
+        :return:
+        """
+        return {x for x in self.terms if x.split(':')[0] in ont_id}
     
     # def get_relations(self, relations_of_interest, source_terms, target_term, ont):
     #     """
@@ -363,10 +429,19 @@ class Obo(dict):
         """
         Recursively merges `new` into `self` and returns a merged `Obo` ontology.
 
-        :param new: Obo object to add.
+        :param new: Obo object (or list of objects) to add.
         :param prefer: prefer 'self' (base Obo) or 'new' (new Obo)
         :return merged: A merged Obo
         """
+
+        if isinstance(new, list):
+            # create merged ontology
+            merged = new[0].copy()
+            for obo in new[1:]:
+                merged = self.merge(obo)
+            return merged
+
+        # TODO: Make merge work for an arbitrary number of ontologies (must be ordered by preference)
         prefer_options = ['self', 'new']
         try:
             assert(prefer in prefer_options)
@@ -376,7 +451,7 @@ class Obo(dict):
         merged = _merge_dict(self, new, prefer)
         return Obo(merged)
 
-    def get_leaves(self, term_types=None, relations_of_interest=None):
+    def _get_leaves(self, term_types=None, relations_of_interest=None):
         """
         Get the leaf terms from the ontology only.
 
