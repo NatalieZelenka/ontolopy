@@ -1,0 +1,6 @@
+﻿ontolopy.obo.load\_obo
+======================
+
+.. currentmodule:: ontolopy.obo
+
+.. autofunction:: load_obo
