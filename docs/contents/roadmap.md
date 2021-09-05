@@ -1,4 +1,4 @@
-# Road map
+# Road-map
 
 This road map is subject to change, but exists to give an outline of plans for Ontolopy in the near future:
 - Increase test coverage

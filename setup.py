@@ -14,6 +14,7 @@ setup(name='ontolopy',
       install_requires=[
             'pandas',
             'numpy',
+            'validators',
       ],
       description='Ontolopy is a package for working with ontology (.obo) files from Python.',
       long_description_content_type='text/markdown',

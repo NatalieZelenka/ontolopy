@@ -10,7 +10,7 @@ def test_download_obo():
 	# TODO: Test not allowed names
 	# TODO: Delete before trying and check that works
 	# TODO: Don't delete before trying and check logging input correct
-	opy.get_obo('uberon-basic', out_dir=data_dir)
+	opy.download_obo('uberon-basic', out_dir=data_dir)
 
 # TODO: sys.path stuff shouldn't be happening
 
@@ -36,15 +36,15 @@ def test_end_to_end():
 
 def test_obo_dict():
 	basic_obo = os.path.join(data_dir, 'uberon.obo')
-	ont = opy.Obo(file_loc=basic_obo, ont_ids=['UBERON'])
+	ont = opy.load_obo(file_loc=basic_obo, ont_ids=['UBERON'])
 	assert(isinstance(ont.keys(), type({}.keys())))
 
 
 def test_validate_term():
-	assert(opy.validate_term(term_text='UBERON:13291823', allowed_ids=['UBERON']))
-	assert(opy.validate_term(term_text='GO:1', allowed_ids=['GO', 'UBERON']))
-	assert(not opy.validate_term(term_text='GO:13291823', allowed_ids=['UBERON']))
-	assert(not opy.validate_term(term_text='UBERON', allowed_ids=['UBERON']))
+	assert(opy.obo._validate_term(term_text='UBERON:13291823', allowed_ids=['UBERON']))
+	assert(opy.obo._validate_term(term_text='GO:1', allowed_ids=['GO', 'UBERON']))
+	assert(not opy.obo._validate_term(term_text='GO:13291823', allowed_ids=['UBERON']))
+	assert(not opy.obo._validate_term(term_text='UBERON', allowed_ids=['UBERON']))
 
 
 def test_read_line_obo():
@@ -53,11 +53,14 @@ def test_read_line_obo():
 	lines = {
 		'id: UBERON:0000172': [('id', 'UBERON:0000172')],
 		'synonym: "subpallium" NARROW [BTO:0003401, NCBITaxon:8782]':
-			[('synonym', 'subpallium'), ('NCBITaxon', 'NCBITaxon:8782')]
+			[('NCBITaxon', 'NCBITaxon:8782'), ('synonym', '"subpallium" NARROW [BTO:0003401, NCBITaxon:8782]')]
 
 	}
 	for line, output in lines.items():
 		line_list = line.split(' ')
+		print('line', line)
+		print('output', output)
+		print('readline', opy.obo._read_line_obo(line_list, ont_ids))
 		try:
 			assert(opy.obo._read_line_obo(line_list, ont_ids) == output)
 		except AssertionError:
