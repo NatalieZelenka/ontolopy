@@ -1,0 +1,6 @@
+﻿ontolopy.obo.Obo.merge
+======================
+
+.. currentmodule:: ontolopy.obo
+
+.. automethod:: Obo.merge

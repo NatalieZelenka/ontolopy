@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Installation &#8212; ontolopy v1.0.2-beta documentation</title>
+    <title>API Reference &#8212; ontolopy v1.0.2-beta documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -38,8 +38,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Quickstart" href="quickstart.html" />
-    <link rel="prev" title="Ontolopy" href="../index.html" />
+    <link rel="next" title="ontolopy.obo.Obo" href="api/ontolopy.obo.Obo.html" />
+    <link rel="prev" title="Development" href="develop.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -71,8 +71,8 @@
       
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="installation.html">
   Installation
  </a>
 </li>
@@ -101,8 +101,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="reference.html">
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
   API Reference
  </a>
 </li>
@@ -148,7 +148,38 @@
       <div class="row">
           
             
-            <div class="col-12 col-md-1 col-xl-2 bd-sidebar no-sidebar"></div>
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs..." aria-label="Search the docs..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/ontolopy.obo.Obo.html">
+   ontolopy.obo.Obo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/ontolopy.obo.Obo.merge.html">
+   ontolopy.obo.Obo.merge
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/ontolopy.obo.download_obo.html">
+   ontolopy.obo.download_obo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/ontolopy.obo.load_obo.html">
+   ontolopy.obo.load_obo
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
             
           
 
@@ -158,9 +189,23 @@
               
               <div class="toc-item">
                 
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ontolopy-obo">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ontolopy.obo
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
 </nav>
               </div>
               
@@ -176,15 +221,39 @@
           
             
           
-          <main class="col-12 col-md-11 col-xl-8 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
               
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>Ontolopy is available on pip, and can be installed using:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install ontolopy
-</pre></div>
+  <div class="tex2jax_ignore mathjax_ignore section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-what-s-an-api admonition">
+<p class="admonition-title">What’s an API?</p>
+<p>API stands for “Application Programming Interface”. Ontolopy’s API Reference describes everything you needs to know about Ontolopy to know how to use it. It describes all public objects, modules, and functions.</p>
+</div>
+<div class="section" id="ontolopy-obo">
+<h2><code class="docutils literal notranslate"><span class="pre">ontolopy.obo</span></code><a class="headerlink" href="#ontolopy-obo" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ontolopy.obo</span></code> module contains code for creating and working with the <code class="docutils literal notranslate"><span class="pre">Obo</span></code> class: objects that represent ontologies.</p>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/ontolopy.obo.Obo.html#ontolopy.obo.Obo" title="ontolopy.obo.Obo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Obo</span></code></a>([source_dict])</p></td>
+<td><p>Creates <cite>Obo</cite> ontology object from <cite>dict</cite> with ontology terms for keys, mapping to term attributes and relations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/ontolopy.obo.Obo.merge.html#ontolopy.obo.Obo.merge" title="ontolopy.obo.Obo.merge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Obo.merge</span></code></a>(new[, prefer])</p></td>
+<td><p>Recursively merges <cite>new</cite> into <cite>self</cite> and returns a merged <cite>Obo</cite> ontology.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/ontolopy.obo.download_obo.html#ontolopy.obo.download_obo" title="ontolopy.obo.download_obo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_obo</span></code></a>(data_name[, out_dir])</p></td>
+<td><p>Download obo from a list of known locations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/ontolopy.obo.load_obo.html#ontolopy.obo.load_obo" title="ontolopy.obo.load_obo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_obo</span></code></a>(file_loc[, ont_ids, discard_obsolete])</p></td>
+<td><p>Loads ontology from <cite>.obo</cite> file at <cite>file_loc</cite>.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -194,8 +263,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="../index.html" title="previous page">Ontolo<strong>py</strong></a>
-    <a class='right-next' id="next-link" href="quickstart.html" title="next page">Quickstart</a>
+    <a class='left-prev' id="prev-link" href="develop.html" title="previous page">Development</a>
+    <a class='right-next' id="next-link" href="api/ontolopy.obo.Obo.html" title="next page">ontolopy.obo.Obo</a>
 
               </div>
               
