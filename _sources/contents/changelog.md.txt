@@ -2,6 +2,10 @@
 
 [//]: # (TODO: Link to GitHub releases)
 
+## [1.1.1-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.1.1-beta...1.1.0-beta)
+Bug fix:
+ - `opy.obo._extract_synonym` used by `opy.Uberon.map_by_name` wasn't stripping whitespace, so missed some mapped names.
+
 ## [1.1.0-beta](https://github.com//NatalieThurlby/ontolopy/compare/1.0.2-beta...1.1.0-beta)
 - New functionality:
     - `Obo()` class:
