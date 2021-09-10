@@ -110,7 +110,7 @@ def _extract_synonym(rest_of_line: str) -> str:
 def _extract_synonym_type(rest_of_line:str) -> str:
     _, i1 = [x for x in _find_all(rest_of_line, '"')][:2]
     i2 = rest_of_line.find('[')
-    return rest_of_line[i1+1: i2]
+    return rest_of_line[i1+1: i2].strip()
 
 
 def _read_line_obo(line_list: list, ont_ids: list):

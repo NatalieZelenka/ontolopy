@@ -104,7 +104,7 @@ class Uberon(Obo):
 
         return tissue_relations
 
-    def sample_map_by_name(self, sample_names, to=None, col_names=None, xref=None):
+    def sample_map_by_name(self, sample_names, to=None, col_names=None, xref=None, synonym_types=None):
         """
         Map tissues from sample identifiers to uberon identifers.
 
@@ -136,6 +136,11 @@ class Uberon(Obo):
             sample_names = pd.Series(sample_names)
         assert(isinstance(sample_names, pd.Series))
 
+        if synonym_types is None:
+            synonym_types = ['EXACT', 'BROAD', 'NARROW']
+        else:
+            assert(isinstance(synonym_types, list))
+
         name_to_uberon = {}
         for tissue_name in sample_names.unique():
             found = False
@@ -163,7 +168,7 @@ class Uberon(Obo):
                 # TODO: Allow change allowed syn types
                 for synonym_info in synonyms_info:
                     syn_type = _extract_synonym_type(synonym_info)
-                    if syn_type not in ['EXACT', 'BROAD', 'NARROW']:
+                    if syn_type not in synonym_types:
                         continue
                     synonym = _extract_synonym(synonym_info)
 
