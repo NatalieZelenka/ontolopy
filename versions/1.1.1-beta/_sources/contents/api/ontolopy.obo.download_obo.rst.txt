@@ -1,0 +1,6 @@
+﻿ontolopy.obo.download\_obo
+==========================
+
+.. currentmodule:: ontolopy.obo
+
+.. autofunction:: download_obo

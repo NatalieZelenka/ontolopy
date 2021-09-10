@@ -1,0 +1,42 @@
+﻿ontolopy.obo.Obo
+================
+
+.. currentmodule:: ontolopy.obo
+
+.. autoclass:: Obo
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Obo.__init__
+      ~Obo.clear
+      ~Obo.copy
+      ~Obo.fromkeys
+      ~Obo.get
+      ~Obo.items
+      ~Obo.keys
+      ~Obo.merge
+      ~Obo.pop
+      ~Obo.popitem
+      ~Obo.setdefault
+      ~Obo.terms_from
+      ~Obo.update
+      ~Obo.values
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Obo.leaves
+      ~Obo.terms
+   
+   

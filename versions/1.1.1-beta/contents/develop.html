@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Development &#8212; ontolopy v1.1.1-beta documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="reference.html" />
+    <link rel="prev" title="Road-map" href="roadmap.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">ontolopy</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="installation.html">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="quickstart.html">
+  Quickstart
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="changelog.html">
+  Changelog
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="roadmap.html">
+  Road-map
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  Development
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="reference.html">
+  API Reference
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/NatalieThurlby/ontolopy" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/hashtag/ontolopy" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter-square"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://pypi.org/project/ontolopy" rel="noopener" target="_blank" title="PyPI">
+            <span><i class="fas fa-box-open"></i></span>
+            <label class="sr-only">PyPI</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <div class="col-12 col-md-1 col-xl-2 bd-sidebar no-sidebar"></div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#developers">
+   Developers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#philosophy">
+   Philosophy
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#developer-guidance">
+   Developer guidance
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#style">
+     Style
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#development-workflow">
+     Development workflow
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-a-new-release">
+     Creating a new release
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ontolopy-s-github-actions">
+     Ontolopy’s GitHub Actions
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-11 col-xl-8 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="tex2jax_ignore mathjax_ignore section" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="developers">
+<h2>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
+<p>Ontolopy was developed by Natalie Thurlby.
+Please <a class="reference external" href="mailto:NatalieThurlby&#37;&#52;&#48;bristol&#46;ac&#46;uk">contact me</a> for any communications related to Ontolopy.</p>
+</div>
+<div class="section" id="philosophy">
+<h2>Philosophy<a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h2>
+<p>Ontolopy was developed for <a class="reference external" href="https://nataliethurlby.github.io/phenotype_from_genotype">Natalie’s thesis</a>.
+While to some degree, Ontolopy benefits from Research Software Engineering best practices such as automated testing, semantic versioning, versioned docs, and continuous integration, there is also much more that could be done to increase reliability and usability (particularly in terms of test and tutorial coverage).</p>
+<p>Please see the <a class="reference internal" href="roadmap.html"><span class="doc std std-doc">roadmap</span></a> to read about future directions for Ontolopy.</p>
+</div>
+<div class="section" id="developer-guidance">
+<h2>Developer guidance<a class="headerlink" href="#developer-guidance" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="style">
+<h3>Style<a class="headerlink" href="#style" title="Permalink to this headline">¶</a></h3>
+<p>Ontolopy uses the following conventions and programming style:</p>
+<ul class="simple">
+<li><p>Python-style naming conventions:</p>
+<ul>
+<li><p>Packages: lowercase (single word)</p></li>
+<li><p>Classes: CamelCase</p></li>
+<li><p>Methods, Functions, Variables: snake_case</p></li>
+</ul>
+</li>
+<li><p>Functions with leading underscores (e.g. <code class="docutils literal notranslate"><span class="pre">_extract_source()</span></code>)  are meant for internal use only.</p></li>
+<li><p>Relative imports should be used at all times, with imports ideally delayed until they are needed.</p></li>
+</ul>
+</div>
+<div class="section" id="development-workflow">
+<h3>Development workflow<a class="headerlink" href="#development-workflow" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Create a <a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/issues/new">new GitHub issue</a> or comment on an existing issue, saying what you are planning on working on and when.</p></li>
+<li><p>Develop on a feature branch, which should branch off the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch:</p>
+<ul class="simple">
+<li><p>To test locally, run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> at root.</p></li>
+<li><p>Build the book locally, run <code class="docutils literal notranslate"><span class="pre">sphinx-build</span> <span class="pre">docs</span> <span class="pre">docs/_build/html</span></code>.</p></li>
+<li><p>To build dist files locally, run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">sdist</span></code>, and to install those local dist files, you can run <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code>.</p></li>
+</ul>
+</li>
+<li><p>Create a <a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/compare">new PR</a> (Pull Request) from the feature branch to the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch (this will trigger tests through the <code class="docutils literal notranslate"><span class="pre">run-tests.yml</span></code> GitHub Action)</p></li>
+</ol>
+</div>
+<div class="section" id="creating-a-new-release">
+<h3>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this headline">¶</a></h3>
+<p>This is the current process for creating a new PyPI and GitHub release:</p>
+<ul class="simple">
+<li><p>Once the PR from dev into main is passing all checks</p></li>
+<li><p>Someone will approve the PR from <code class="docutils literal notranslate"><span class="pre">dev</span></code> into <code class="docutils literal notranslate"><span class="pre">main</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">sdist</span> <span class="pre">bdist_wheel</span></code> on <code class="docutils literal notranslate"><span class="pre">main</span></code> to create dist files to upload when doing GitHub release.</p></li>
+<li><p>fill in the changelog in the docs</p></li>
+<li><p>Create a <a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/releases/new">new release</a>, filling in the checklist</p>
+<ul>
+<li><p>copy the changelog to the GitHub release</p></li>
+<li><p>tag the release with the <strong>exact same version number</strong> as the number in <code class="docutils literal notranslate"><span class="pre">ontolopy/version.py</span></code> (the action will fail otherwise)</p></li>
+<li><p>upload the distribution files.</p></li>
+</ul>
+</li>
+<li><p>Creating the release will automatically run a GitHub action that distributes the package on pypi and stores a version of the docs that will remain available. Check that it was successful.</p></li>
+</ul>
+</div>
+<div class="section" id="ontolopy-s-github-actions">
+<h3>Ontolopy’s GitHub Actions<a class="headerlink" href="#ontolopy-s-github-actions" title="Permalink to this headline">¶</a></h3>
+<p>Ontolopy uses GitHub Actions for Continuous Integration to automate updating the docs, running tests, and distributing the package.
+The actions are:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/actions/workflows/deploy-site.yml"><code class="docutils literal notranslate"><span class="pre">deploy-site.yml</span></code></a>: deploys docs (latest) when changes are pulled into <code class="docutils literal notranslate"><span class="pre">dev</span></code>.</p></li>
+<li><p><a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/actions/workflows/new-release.yml"><code class="docutils literal notranslate"><span class="pre">new-release.yml</span></code></a>: deploys/updates the versioned docs, and distributes package to pypi with twine when a new release is made from <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p></li>
+<li><p><a class="reference external" href="https://github.com/NatalieThurlby/ontolopy/actions/workflows/run-tests.yml"><code class="docutils literal notranslate"><span class="pre">run-tests.yml</span></code></a>: runs  tests using <a class="reference external" href="https://docs.pytest.org/en/stable/">pytest</a> when changes are pushed/pulled into <code class="docutils literal notranslate"><span class="pre">main</span></code> or <code class="docutils literal notranslate"><span class="pre">dev</span></code>.</p></li>
+</ul>
+<hr class="docutils" />
+<p>These materials were adapted from the <a class="reference external" href="https://www.bristol.ac.uk/acrc/research-software-engineering/">Bristol RSE team</a>’s <a class="reference external" href="https://metawards.org/versions/1.5.1/development.html">Metawards Development Guide</a>.</p>
+</div>
+</div>
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+    <a class='left-prev' id="prev-link" href="roadmap.html" title="previous page">Road-map</a>
+    <a class='right-next' id="next-link" href="reference.html" title="next page">API Reference</a>
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Natalie Thurlby.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
